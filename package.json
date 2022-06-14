@@ -1,0 +1,13 @@
+{
+  "name": "@censys/node",
+  "version": "3.0.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {},
+  "devDependencies": {
+    "openapi-typescript-codegen": "^0.23.0",
+    "ts-openapi-codegen": "^0.2.4",
+    "typescript": "^4.7.3"
+  }, 
+  "workspaces": ["packages/*"]
+}
