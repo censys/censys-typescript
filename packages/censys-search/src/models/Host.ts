@@ -2,9 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { components_x_partials_hosts_Location } from './components_x_partials_hosts_Location';
-import type { components_x_partials_hosts_PerspectiveID } from './components_x_partials_hosts_PerspectiveID';
-import type { components_x_partials_hosts_Routing } from './components_x_partials_hosts_Routing';
+import type { Location } from './Location';
+import type { PerspectiveID } from './PerspectiveID';
+import type { Routing } from './Routing';
 
 export type Host = {
     ip?: string;
@@ -15,12 +15,12 @@ export type Host = {
         transport_protocol?: string;
         software?: Array<string>;
         truncated?: boolean;
-        perspective_id?: components_x_partials_hosts_PerspectiveID;
+        perspective_id?: PerspectiveID;
     }>;
     location_updated_at?: string;
-    location?: components_x_partials_hosts_Location;
+    location?: Location;
     autonomous_system_updated_at?: string;
-    autonomous_system?: components_x_partials_hosts_Routing;
+    autonomous_system?: Routing;
     operating_system?: {
         product?: string;
         vendor?: string;

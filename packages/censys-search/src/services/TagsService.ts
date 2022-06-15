@@ -1,8 +1,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ApiResponse } from '../src/models/ApiResponse';
-import type { Tag } from '../src/models/Tag';
+import type { ApiResponse } from '../models/ApiResponse';
+import type { Tag } from '../models/Tag';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';

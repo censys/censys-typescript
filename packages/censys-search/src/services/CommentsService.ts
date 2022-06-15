@@ -1,9 +1,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ApiResponse } from '../src/models/ApiResponse';
-import type { CertComment } from '../src/models/CertComment';
-import type { HostComment } from '../src/models/HostComment';
+import type { ApiResponse } from '../models/ApiResponse';
+import type { CertComment } from '../models/CertComment';
+import type { HostComment } from '../models/HostComment';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';

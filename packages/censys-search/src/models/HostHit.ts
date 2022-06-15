@@ -2,8 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { components_x_partials_hosts_Location } from './components_x_partials_hosts_Location';
-import type { components_x_partials_hosts_Routing } from './components_x_partials_hosts_Routing';
+import type { Location } from './Location';
+import type { Routing } from './Routing';
 
 export type HostHit = {
     ip?: string;
@@ -13,7 +13,7 @@ export type HostHit = {
         transport_protocol?: string;
         certificate?: string;
     }>;
-    location?: components_x_partials_hosts_Location;
-    autonomous_system?: components_x_partials_hosts_Routing;
+    location?: Location;
+    autonomous_system?: Routing;
 };
 

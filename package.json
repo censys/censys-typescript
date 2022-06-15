@@ -3,11 +3,15 @@
   "version": "3.0.0",
   "license": "Apache-2.0",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "build:search": "openapi -i openapi.yml -o packages/censys-search/src -c axios"
+  },
   "devDependencies": {
     "openapi-typescript-codegen": "^0.23.0",
-    "ts-openapi-codegen": "^0.2.4",
+    "prettier-plugin-organize-imports": "^2.3.4",
     "typescript": "^4.7.3"
-  }, 
-  "workspaces": ["packages/*"]
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

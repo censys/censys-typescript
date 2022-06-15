@@ -1,13 +1,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ApiResponse } from '../src/models/ApiResponse';
-import type { Host } from '../src/models/Host';
-import type { HostComment } from '../src/models/HostComment';
-import type { HostEvent } from '../src/models/HostEvent';
-import type { HostHit } from '../src/models/HostHit';
-import type { Tag } from '../src/models/Tag';
-import type { VirtualHostHit } from '../src/models/VirtualHostHit';
+import type { ApiResponse } from '../models/ApiResponse';
+import type { Host } from '../models/Host';
+import type { HostComment } from '../models/HostComment';
+import type { HostEvent } from '../models/HostEvent';
+import type { HostHit } from '../models/HostHit';
+import type { Tag } from '../models/Tag';
+import type { VirtualHostHit } from '../models/VirtualHostHit';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';

@@ -2276,208 +2276,6 @@ paths:
         204:
           description: "No Content"
 components:
-  x-partials:
-    hosts:
-      PerspectiveID:
-        type: string
-        description: The name of the network from which Censys observed this service.
-        enum: [PERSPECTIVE_NTT, PERSPECTIVE_TELIA, PERSPECTIVE_HE]
-      Location:
-        type: object
-        properties:
-          continent:
-            type: string
-            example: North America
-          country:
-            type: string
-            example: United States
-          country_code:
-            type: string
-            example: US
-          postal_code:
-            type: string
-            example: "48104"
-            maxLength: 10
-          timezone:
-            type: string
-            example: America/Michigan
-          coordinates:
-            type: object
-            properties:
-              latitude:
-                type: string
-                example: "42.273"
-              longitude:
-                type: string
-                example: "-83.751"
-          registered_country:
-            type: string
-            example: United States
-          registered_country_code:
-            type: string
-            example: US
-      Routing:
-        type: object
-        properties:
-          asn:
-            type: integer
-            example: 15169
-          description:
-            type: string
-            example: GOOGLE
-          bgp_prefix:
-            type: string
-            example: 8.8.8.0/24
-          name:
-            type: string
-            example: GOOGLE
-          country_code:
-            type: string
-            example: US
-      ServiceRemovedFromHostNotObserved:
-        type: object
-        required:
-          - _reason
-        properties:
-          _reason:
-            type: string
-            enum: [not_observed,]
-          not_observed:
-            type: object
-            properties:
-              not_observed_at:
-                type: string
-                format: date-time
-              perspective_id:
-                $ref: "#/components/x-partials/hosts/PerspectiveID"
-      ServiceRemovedFromHostExpired:
-        type: object
-        required:
-          - _reason
-        properties:
-          _reason:
-            type: string
-            enum: [expired,]
-          expired:
-            type: object
-            properties:
-              expired_at:
-                type: string
-                format: date-time
-      ServiceID:
-        type: object
-        description: Object used to uniquely identify a service based on its 3-tuple of
-          (port, transport_protocol, service_name) for example `80-TCP-HTTP`.
-        properties:
-          port:
-            type: integer
-            description: Service port number.
-            example: 443
-          transport_protocol:
-            type: string
-            description: Service transport protocol.
-            enum: [TCP, UDP, QUIC]
-            example: TCP
-          service_name:
-            type: string
-            description: Service name.
-            example: HTTP
-      LocationUpdatedEvent:
-        type: object
-        required:
-          - _event
-        properties:
-          _event:
-            type: string
-            enum: [location_updated,]
-          location_updated:
-            type: object
-            properties:
-              location:
-                $ref: "#/components/x-partials/hosts/Location"
-      RoutingUpdatedEvent:
-        type: object
-        required:
-          - _event
-        properties:
-          _event:
-            type: string
-            enum: [routing_updated,]
-          routing_updated:
-            type: object
-            properties:
-              routing:
-                $ref: "#/components/x-partials/hosts/Routing"
-      ServiceObservedEvent:
-        type: object
-        required:
-          - _event
-        properties:
-          _event:
-            type: string
-            enum: [service_observed,]
-          service_observed:
-            type: object
-            properties:
-              id:
-                $ref: "#/components/x-partials/hosts/ServiceID"
-              observed_at:
-                type: string
-                format: date-time
-              perspective_id:
-                $ref: "#/components/x-partials/hosts/PerspectiveID"
-              changed_fields:
-                type: array
-                description: A list of fields that changed during this observation.
-                items:
-                  type: object
-                  properties:
-                    field_name:
-                      type: string
-                      example: services.banner
-      ServiceRemovedFromHostEvent:
-        type: object
-        required:
-          - _event
-        properties:
-          _event:
-            type: string
-            enum: [service_removed_from_host,]
-          service_removed_from_host:
-            type: object
-            oneOf:
-              - $ref: "#/components/x-partials/hosts/ServiceRemovedFromHostNotObserved"
-              - $ref: "#/components/x-partials/hosts/ServiceRemovedFromHostExpired"
-            discriminator:
-              propertyName: _reason
-              mapping:
-                not_observed: "#/components/x-partials/hosts/ServiceRemovedFromHostNotObserved"
-                expired: "#/components/x-partials/hosts/ServiceRemovedFromHostExpired"
-            properties:
-              _reason:
-                type: string
-                description: Discriminator which provides the type of reason this object represents.
-                example: "not_observed"
-              id:
-                $ref: "#/components/x-partials/hosts/ServiceID"
-      ServiceAddedToHostEvent:
-        type: object
-        required:
-          - _event
-        properties:
-          _event:
-            type: string
-            enum: [service_added_to_host,]
-          service_added_to_host:
-            type: object
-            properties:
-              id:
-                $ref: "#/components/x-partials/hosts/ServiceID"
-              observed_at:
-                type: string
-                format: date-time
-              perspective_id:
-                $ref: "#/components/x-partials/hosts/PerspectiveID"
   schemas:
     ApiResponse:
       title: Success Response (v2)
@@ -2504,6 +2302,206 @@ components:
           example: Unprocessable Entity
         error:
           type: string
+    PerspectiveID:
+      type: string
+      description: The name of the network from which Censys observed this service.
+      enum: [PERSPECTIVE_NTT, PERSPECTIVE_TELIA, PERSPECTIVE_HE]
+    Location:
+      type: object
+      properties:
+        continent:
+          type: string
+          example: North America
+        country:
+          type: string
+          example: United States
+        country_code:
+          type: string
+          example: US
+        postal_code:
+          type: string
+          example: "48104"
+          maxLength: 10
+        timezone:
+          type: string
+          example: America/Michigan
+        coordinates:
+          type: object
+          properties:
+            latitude:
+              type: string
+              example: "42.273"
+            longitude:
+              type: string
+              example: "-83.751"
+        registered_country:
+          type: string
+          example: United States
+        registered_country_code:
+          type: string
+          example: US
+    Routing:
+        type: object
+        properties:
+          asn:
+            type: integer
+            example: 15169
+          description:
+            type: string
+            example: GOOGLE
+          bgp_prefix:
+            type: string
+            example: 8.8.8.0/24
+          name:
+            type: string
+            example: GOOGLE
+          country_code:
+            type: string
+            example: US
+    ServiceID:
+      type: object
+      description: Object used to uniquely identify a service based on its 3-tuple of
+        (port, transport_protocol, service_name) for example `80-TCP-HTTP`.
+      properties:
+        port:
+          type: integer
+          description: Service port number.
+          example: 443
+        transport_protocol:
+          type: string
+          description: Service transport protocol.
+          enum: [TCP, UDP, QUIC]
+          example: TCP
+        service_name:
+          type: string
+          description: Service name.
+          example: HTTP
+    ServiceRemovedFromHostNotObserved:
+        type: object
+        required:
+          - _reason
+        properties:
+          _reason:
+            type: string
+            enum: [not_observed,]
+          not_observed:
+            type: object
+            properties:
+              not_observed_at:
+                type: string
+                format: date-time
+              perspective_id:
+                $ref: "#/components/schemas/PerspectiveID"
+    ServiceRemovedFromHostExpired:
+        type: object
+        required:
+          - _reason
+        properties:
+          _reason:
+            type: string
+            enum: [expired,]
+          expired:
+            type: object
+            properties:
+              expired_at:
+                type: string
+                format: date-time
+    ServiceObservedEvent:
+        type: object
+        required:
+          - _event
+        properties:
+          _event:
+            type: string
+            enum: [service_observed,]
+          service_observed:
+            type: object
+            properties:
+              id:
+                $ref: "#/components/schemas/ServiceID"
+              observed_at:
+                type: string
+                format: date-time
+              perspective_id:
+                $ref: "#/components/schemas/PerspectiveID"
+              changed_fields:
+                type: array
+                description: A list of fields that changed during this observation.
+                items:
+                  type: object
+                  properties:
+                    field_name:
+                      type: string
+                      example: services.banner
+    LocationUpdatedEvent:
+        type: object
+        required:
+          - _event
+        properties:
+          _event:
+            type: string
+            enum: [location_updated,]
+          location_updated:
+            type: object
+            properties:
+              location:
+                $ref: "#/components/schemas/Location"
+    RoutingUpdatedEvent:
+        type: object
+        required:
+          - _event
+        properties:
+          _event:
+            type: string
+            enum: [routing_updated,]
+          routing_updated:
+            type: object
+            properties:
+              routing:
+                $ref: "#/components/schemas/Routing"
+    ServiceRemovedFromHostEvent:
+        type: object
+        required:
+          - _event
+        properties:
+          _event:
+            type: string
+            enum: [service_removed_from_host,]
+          service_removed_from_host:
+            type: object
+            oneOf:
+              - $ref: "#/components/schemas/ServiceRemovedFromHostNotObserved"
+              - $ref: "#/components/schemas/ServiceRemovedFromHostExpired"
+            discriminator:
+              propertyName: _reason
+              mapping:
+                not_observed: "#/components/schemas/ServiceRemovedFromHostNotObserved"
+                expired: "#/components/schemas/ServiceRemovedFromHostExpired"
+            properties:
+              _reason:
+                type: string
+                description: Discriminator which provides the type of reason this object represents.
+                example: "not_observed"
+              id:
+                $ref: "#/components/schemas/ServiceID"
+    ServiceAddedToHostEvent:
+        type: object
+        required:
+          - _event
+        properties:
+          _event:
+            type: string
+            enum: [service_added_to_host,]
+          service_added_to_host:
+            type: object
+            properties:
+              id:
+                $ref: "#/components/schemas/ServiceID"
+              observed_at:
+                type: string
+                format: date-time
+              perspective_id:
+                $ref: "#/components/schemas/PerspectiveID"
     Host:
       type: object
       properties:
@@ -2532,7 +2530,7 @@ components:
                 type: boolean
                 example: false
               perspective_id:
-                $ref: "#/components/x-partials/hosts/PerspectiveID"
+                $ref: "#/components/schemas/PerspectiveID"
           example:
             - port: 53
               service_name: DNS
@@ -2578,12 +2576,12 @@ components:
           type: string
           example: "2021-03-30T14:53:12.980328Z"
         location:
-          $ref: "#/components/x-partials/hosts/Location"
+          $ref: "#/components/schemas/Location"
         autonomous_system_updated_at:
           type: string
           example: "2021-04-09T17:33:12.118684Z"
         autonomous_system:
-          $ref: "#/components/x-partials/hosts/Routing"
+          $ref: "#/components/schemas/Routing"
         operating_system:
           type: object
           properties:
@@ -2633,9 +2631,9 @@ components:
               transport_protocol: TCP
               certificate: "e58e89a726d80bb0219b218c3ab9d818b4be75d77959508400d660ebe1c1be3d"
         location:
-          $ref: "#/components/x-partials/hosts/Location"
+          $ref: "#/components/schemas/Location"
         autonomous_system:
-          $ref: "#/components/x-partials/hosts/Routing"
+          $ref: "#/components/schemas/Routing"
     VirtualHostHit:
       allOf:
         - type: object
@@ -2647,19 +2645,19 @@ components:
     HostEvent:
       type: object
       oneOf:
-        - $ref: "#/components/x-partials/hosts/ServiceObservedEvent"
-        - $ref: "#/components/x-partials/hosts/LocationUpdatedEvent"
-        - $ref: "#/components/x-partials/hosts/RoutingUpdatedEvent"
-        - $ref: "#/components/x-partials/hosts/ServiceRemovedFromHostEvent"
-        - $ref: "#/components/x-partials/hosts/ServiceAddedToHostEvent"
+        - $ref: "#/components/schemas/ServiceObservedEvent"
+        - $ref: "#/components/schemas/LocationUpdatedEvent"
+        - $ref: "#/components/schemas/RoutingUpdatedEvent"
+        - $ref: "#/components/schemas/ServiceRemovedFromHostEvent"
+        - $ref: "#/components/schemas/ServiceAddedToHostEvent"
       discriminator:
         propertyName: _event
         mapping:
-          service_observed: "#/components/x-partials/hosts/ServiceObservedEvent"
-          location_updated: "#/components/x-partials/hosts/LocationUpdatedEvent"
-          routing_updated: "#/components/x-partials/hosts/RoutingUpdatedEvent"
-          service_removed_from_host: "#/components/x-partials/hosts/ServiceRemovedFromHostEvent"
-          service_added_to_host: "#/components/x-partials/hosts/ServiceAddedToHostEvent"
+          service_observed: "#/components/schemas/ServiceObservedEvent"
+          location_updated: "#/components/schemas/LocationUpdatedEvent"
+          routing_updated: "#/components/schemas/RoutingUpdatedEvent"
+          service_removed_from_host: "#/components/schemas/ServiceRemovedFromHostEvent"
+          service_added_to_host: "#/components/schemas/ServiceAddedToHostEvent"
       properties:
         _event:
           type: string
