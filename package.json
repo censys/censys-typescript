@@ -4,6 +4,7 @@
   "license": "Apache-2.0",
   "private": true,
   "scripts": {
+    "postinstall": "husky install",
     "build:search": "openapi -i openapi.yml -o packages/censys-search/src -c axios",
     "format": "prettier --write 'packages/**/*.ts'",
     "lint": "eslint ."
@@ -14,6 +15,7 @@
     "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^26.5.3",
+    "husky": "^8.0.1",
     "openapi-typescript-codegen": "^0.23.0",
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "^2.3.4",
