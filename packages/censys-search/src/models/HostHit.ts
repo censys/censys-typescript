@@ -2,8 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Location } from './Location';
-import type { Routing } from './Routing';
+import type { Location } from "./Location";
+import type { Routing } from "./Routing";
 
 export type HostHit = {
     ip?: string;
@@ -16,4 +16,3 @@ export type HostHit = {
     location?: Location;
     autonomous_system?: Routing;
 };
-

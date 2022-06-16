@@ -2,9 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Location } from './Location';
-import type { PerspectiveID } from './PerspectiveID';
-import type { Routing } from './Routing';
+import type { Location } from "./Location";
+import type { PerspectiveID } from "./PerspectiveID";
+import type { Routing } from "./Routing";
 
 export type Host = {
     ip?: string;
@@ -30,4 +30,3 @@ export type Host = {
         other?: any;
     };
 };
-

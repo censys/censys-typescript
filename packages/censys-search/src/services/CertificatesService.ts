@@ -1,14 +1,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Certificate } from '../models/Certificate';
+import type { Certificate } from "../models/Certificate";
 
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 
 export class CertificatesService {
-
     /**
      * Returns structured certificate data for the specified SHA-256 fingerprint
      * > The Censys legacy v1 API contains API endpoints which are being maintained until replacement v2 endpoints are available.
@@ -19,13 +18,13 @@ export class CertificatesService {
      * @throws ApiError
      */
     public static viewCertificate(
-        sha256: string,
+        sha256: string
     ): CancelablePromise<Certificate> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/v1/view/certificates/{sha256}',
+            method: "GET",
+            url: "/v1/view/certificates/{sha256}",
             path: {
-                'sha256': sha256,
+                sha256: sha256,
             },
             errors: {
                 404: `The requested record does not exist.`,
@@ -44,14 +43,12 @@ export class CertificatesService {
      * @returns any The search or query executed successfully.
      * @throws ApiError
      */
-    public static searchCertificates(
-        requestBody: {
-            query?: string;
-            page?: number;
-            fields?: Array<string>;
-            flatten?: boolean;
-        },
-    ): CancelablePromise<{
+    public static searchCertificates(requestBody: {
+        query?: string;
+        page?: number;
+        fields?: Array<string>;
+        flatten?: boolean;
+    }): CancelablePromise<{
         status?: string;
         metadata?: {
             count?: number;
@@ -62,10 +59,10 @@ export class CertificatesService {
         results?: Array<Certificate>;
     }> {
         return __request(OpenAPI, {
-            method: 'POST',
-            url: '/v1/search/certificates',
+            method: "POST",
+            url: "/v1/search/certificates",
             body: requestBody,
-            mediaType: 'application/json',
+            mediaType: "application/json",
             errors: {
                 400: `Your query could not be executed (e.g., query could not be parsed or timed out.)`,
                 404: `Specified search index was not valid.`,
@@ -84,13 +81,11 @@ export class CertificatesService {
      * @returns any The report was successfully generated.
      * @throws ApiError
      */
-    public static generateCertificateReport(
-        requestBody: {
-            query?: string;
-            field?: string;
-            buckets?: number;
-        },
-    ): CancelablePromise<{
+    public static generateCertificateReport(requestBody: {
+        query?: string;
+        field?: string;
+        buckets?: number;
+    }): CancelablePromise<{
         status?: string;
         results?: Array<{
             key?: string;
@@ -107,10 +102,10 @@ export class CertificatesService {
         };
     }> {
         return __request(OpenAPI, {
-            method: 'POST',
-            url: '/v1/report/certificates',
+            method: "POST",
+            url: "/v1/report/certificates",
             body: requestBody,
-            mediaType: 'application/json',
+            mediaType: "application/json",
             errors: {
                 400: `Your query could not be executed (e.g., query could not be parsed or timed out.)`,
                 429: `Your query was not executed because you have exceeded your specified rate limit.`,
@@ -130,21 +125,18 @@ export class CertificatesService {
      * @returns string The records were successfully retrieved.
      * @throws ApiError
      */
-    public static bulkCertificateLookup(
-        requestBody: {
-            fingerprints?: Array<string>;
-        },
-    ): CancelablePromise<Record<string, string>> {
+    public static bulkCertificateLookup(requestBody: {
+        fingerprints?: Array<string>;
+    }): CancelablePromise<Record<string, string>> {
         return __request(OpenAPI, {
-            method: 'POST',
-            url: '/v1/bulk/certificates',
+            method: "POST",
+            url: "/v1/bulk/certificates",
             body: requestBody,
-            mediaType: 'application/json',
+            mediaType: "application/json",
             errors: {
                 429: `Your query was not executed because you have exceeded your specified rate limit.`,
                 500: `An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.`,
             },
         });
     }
-
 }

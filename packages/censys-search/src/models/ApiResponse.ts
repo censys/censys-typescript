@@ -7,4 +7,3 @@ export type ApiResponse = {
     status?: string;
     result?: any;
 };
-

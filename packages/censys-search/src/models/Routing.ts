@@ -9,4 +9,3 @@ export type Routing = {
     name?: string;
     country_code?: string;
 };
-

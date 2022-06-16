@@ -15,4 +15,3 @@ export type Location = {
     registered_country?: string;
     registered_country_code?: string;
 };
-

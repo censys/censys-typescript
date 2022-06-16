@@ -9,4 +9,3 @@ export type HostComment = {
     contents: string;
     created_at?: string;
 };
-

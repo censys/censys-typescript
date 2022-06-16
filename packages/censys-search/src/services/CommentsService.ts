@@ -1,16 +1,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ApiResponse } from '../models/ApiResponse';
-import type { CertComment } from '../models/CertComment';
-import type { HostComment } from '../models/HostComment';
+import type { ApiResponse } from "../models/ApiResponse";
+import type { CertComment } from "../models/CertComment";
+import type { HostComment } from "../models/HostComment";
 
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 
 export class CommentsService {
-
     /**
      * Returns a list of comments on the given host.
      * Returns a list of comments on the given host.
@@ -19,19 +18,19 @@ export class CommentsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getCommentsByHost(
-        ip: string,
-    ): CancelablePromise<(ApiResponse & {
-        result?: {
-            ip?: string;
-            comments?: Array<HostComment>;
-        };
-    })> {
+    public static getCommentsByHost(ip: string): CancelablePromise<
+        ApiResponse & {
+            result?: {
+                ip?: string;
+                comments?: Array<HostComment>;
+            };
+        }
+    > {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/v2/hosts/{ip}/comments',
+            method: "GET",
+            url: "/v2/hosts/{ip}/comments",
             path: {
-                'ip': ip,
+                ip: ip,
             },
         });
     }
@@ -49,18 +48,20 @@ export class CommentsService {
         ip: string,
         requestBody: {
             contents?: string;
-        },
-    ): CancelablePromise<(ApiResponse & {
-        result?: HostComment;
-    })> {
+        }
+    ): CancelablePromise<
+        ApiResponse & {
+            result?: HostComment;
+        }
+    > {
         return __request(OpenAPI, {
-            method: 'POST',
-            url: '/v2/hosts/{ip}/comments',
+            method: "POST",
+            url: "/v2/hosts/{ip}/comments",
             path: {
-                'ip': ip,
+                ip: ip,
             },
             body: requestBody,
-            mediaType: 'application/json',
+            mediaType: "application/json",
             errors: {
                 422: `Unprocessable Entity`,
             },
@@ -78,16 +79,18 @@ export class CommentsService {
      */
     public static getCommentByHost(
         ip: string,
-        commentId: string,
-    ): CancelablePromise<(ApiResponse & {
-        result?: HostComment;
-    })> {
+        commentId: string
+    ): CancelablePromise<
+        ApiResponse & {
+            result?: HostComment;
+        }
+    > {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/v2/hosts/{ip}/comments/{comment_id}',
+            method: "GET",
+            url: "/v2/hosts/{ip}/comments/{comment_id}",
             path: {
-                'ip': ip,
-                'comment_id': commentId,
+                ip: ip,
+                comment_id: commentId,
             },
             errors: {
                 404: `Not Found`,
@@ -111,19 +114,21 @@ export class CommentsService {
         commentId: string,
         requestBody: {
             contents?: string;
-        },
-    ): CancelablePromise<(ApiResponse & {
-        result?: HostComment;
-    })> {
+        }
+    ): CancelablePromise<
+        ApiResponse & {
+            result?: HostComment;
+        }
+    > {
         return __request(OpenAPI, {
-            method: 'PUT',
-            url: '/v2/hosts/{ip}/comments/{comment_id}',
+            method: "PUT",
+            url: "/v2/hosts/{ip}/comments/{comment_id}",
             path: {
-                'ip': ip,
-                'comment_id': commentId,
+                ip: ip,
+                comment_id: commentId,
             },
             body: requestBody,
-            mediaType: 'application/json',
+            mediaType: "application/json",
             errors: {
                 404: `Not Found`,
                 422: `Unprocessable Entity`,
@@ -142,14 +147,14 @@ export class CommentsService {
      */
     public static deleteCommentByHost(
         ip: string,
-        commentId: string,
+        commentId: string
     ): CancelablePromise<void> {
         return __request(OpenAPI, {
-            method: 'DELETE',
-            url: '/v2/hosts/{ip}/comments/{comment_id}',
+            method: "DELETE",
+            url: "/v2/hosts/{ip}/comments/{comment_id}",
             path: {
-                'ip': ip,
-                'comment_id': commentId,
+                ip: ip,
+                comment_id: commentId,
             },
             errors: {
                 404: `Not Found`,
@@ -166,19 +171,19 @@ export class CommentsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getCommentsByCert(
-        fingerprint: string,
-    ): CancelablePromise<(ApiResponse & {
-        result?: {
-            fingerprint?: string;
-            comments?: Array<CertComment>;
-        };
-    })> {
+    public static getCommentsByCert(fingerprint: string): CancelablePromise<
+        ApiResponse & {
+            result?: {
+                fingerprint?: string;
+                comments?: Array<CertComment>;
+            };
+        }
+    > {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/v2/certificates/{fingerprint}/comments',
+            method: "GET",
+            url: "/v2/certificates/{fingerprint}/comments",
             path: {
-                'fingerprint': fingerprint,
+                fingerprint: fingerprint,
             },
         });
     }
@@ -196,18 +201,20 @@ export class CommentsService {
         fingerprint: string,
         requestBody: {
             contents?: string;
-        },
-    ): CancelablePromise<(ApiResponse & {
-        result?: CertComment;
-    })> {
+        }
+    ): CancelablePromise<
+        ApiResponse & {
+            result?: CertComment;
+        }
+    > {
         return __request(OpenAPI, {
-            method: 'POST',
-            url: '/v2/certificates/{fingerprint}/comments',
+            method: "POST",
+            url: "/v2/certificates/{fingerprint}/comments",
             path: {
-                'fingerprint': fingerprint,
+                fingerprint: fingerprint,
             },
             body: requestBody,
-            mediaType: 'application/json',
+            mediaType: "application/json",
         });
     }
 
@@ -222,16 +229,18 @@ export class CommentsService {
      */
     public static getCommentByCert(
         fingerprint: string,
-        commentId: string,
-    ): CancelablePromise<(ApiResponse & {
-        result?: CertComment;
-    })> {
+        commentId: string
+    ): CancelablePromise<
+        ApiResponse & {
+            result?: CertComment;
+        }
+    > {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/v2/certificates/{fingerprint}/comments/{comment_id}',
+            method: "GET",
+            url: "/v2/certificates/{fingerprint}/comments/{comment_id}",
             path: {
-                'fingerprint': fingerprint,
-                'comment_id': commentId,
+                fingerprint: fingerprint,
+                comment_id: commentId,
             },
         });
     }
@@ -251,19 +260,21 @@ export class CommentsService {
         commentId: string,
         requestBody: {
             contents?: string;
-        },
-    ): CancelablePromise<(ApiResponse & {
-        result?: CertComment;
-    })> {
+        }
+    ): CancelablePromise<
+        ApiResponse & {
+            result?: CertComment;
+        }
+    > {
         return __request(OpenAPI, {
-            method: 'PUT',
-            url: '/v2/certificates/{fingerprint}/comments/{comment_id}',
+            method: "PUT",
+            url: "/v2/certificates/{fingerprint}/comments/{comment_id}",
             path: {
-                'fingerprint': fingerprint,
-                'comment_id': commentId,
+                fingerprint: fingerprint,
+                comment_id: commentId,
             },
             body: requestBody,
-            mediaType: 'application/json',
+            mediaType: "application/json",
             errors: {
                 404: `Not Found`,
             },
@@ -281,24 +292,25 @@ export class CommentsService {
      */
     public static deleteCommentByCert(
         fingerprint: string,
-        commentId: string,
-    ): CancelablePromise<(ApiResponse & {
-        result?: {
-            fingerprint?: string;
-            comments?: Array<CertComment>;
-        };
-    })> {
+        commentId: string
+    ): CancelablePromise<
+        ApiResponse & {
+            result?: {
+                fingerprint?: string;
+                comments?: Array<CertComment>;
+            };
+        }
+    > {
         return __request(OpenAPI, {
-            method: 'DELETE',
-            url: '/v2/certificates/{fingerprint}/comments/{comment_id}',
+            method: "DELETE",
+            url: "/v2/certificates/{fingerprint}/comments/{comment_id}",
             path: {
-                'fingerprint': fingerprint,
-                'comment_id': commentId,
+                fingerprint: fingerprint,
+                comment_id: commentId,
             },
             errors: {
                 404: `Not Found`,
             },
         });
     }
-
 }

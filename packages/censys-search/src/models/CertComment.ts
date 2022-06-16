@@ -9,4 +9,3 @@ export type CertComment = {
     contents: string;
     created_at?: string;
 };
-

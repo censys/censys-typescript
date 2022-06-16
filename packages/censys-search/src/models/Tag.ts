@@ -11,4 +11,3 @@ export type Tag = {
     readonly created_at?: string;
     readonly updated_at?: string;
 };
-

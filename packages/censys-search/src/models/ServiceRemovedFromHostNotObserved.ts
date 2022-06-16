@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { PerspectiveID } from './PerspectiveID';
+import type { PerspectiveID } from "./PerspectiveID";
 
 export type ServiceRemovedFromHostNotObserved = {
     _reason: ServiceRemovedFromHostNotObserved._reason;
@@ -13,11 +13,7 @@ export type ServiceRemovedFromHostNotObserved = {
 };
 
 export namespace ServiceRemovedFromHostNotObserved {
-
     export enum _reason {
-        NOT_OBSERVED = 'not_observed',
+        NOT_OBSERVED = "not_observed",
     }
-
-
 }
-

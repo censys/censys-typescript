@@ -7,4 +7,3 @@ export type ApiErrorResponse = {
     status?: string;
     error?: string;
 };
-

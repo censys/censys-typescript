@@ -2,11 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { PerspectiveID } from './PerspectiveID';
-import type { ServiceID } from './ServiceID';
+import type { PerspectiveID } from "./PerspectiveID";
+import type { ServiceID } from "./ServiceID";
 
 export type ServiceObservedEvent = {
-    _event: 'service_observed';
+    _event: "service_observed";
     service_observed?: {
         id?: ServiceID;
         observed_at?: string;
@@ -19,4 +19,3 @@ export type ServiceObservedEvent = {
         }>;
     };
 };
-

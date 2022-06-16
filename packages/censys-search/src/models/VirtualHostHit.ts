@@ -2,9 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { HostHit } from './HostHit';
+import type { HostHit } from "./HostHit";
 
-export type VirtualHostHit = ({
+export type VirtualHostHit = {
     name?: string;
-} & HostHit);
-
+} & HostHit;

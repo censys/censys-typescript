@@ -1,12 +1,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 
 export class DataService {
-
     /**
      * Returns data on the types of scans (series) we perform
      * > The Censys legacy v1 API contains API endpoints which are being maintained until replacement v2 endpoints are available.
@@ -20,8 +19,8 @@ export class DataService {
         raw_series?: Record<string, string>;
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/v1/data',
+            method: "GET",
+            url: "/v1/data",
             errors: {
                 429: `Your query was not executed because you have exceeded your specified rate limit.`,
                 500: `An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.`,
@@ -38,9 +37,7 @@ export class DataService {
      * @returns any We were able to successfully retrieve a series.
      * @throws ApiError
      */
-    public static viewSeries(
-        series: string,
-    ): CancelablePromise<{
+    public static viewSeries(series: string): CancelablePromise<{
         id?: string;
         name?: string;
         description?: string;
@@ -58,10 +55,10 @@ export class DataService {
         };
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/v1/data/{series}',
+            method: "GET",
+            url: "/v1/data/{series}",
             path: {
-                'series': series,
+                series: series,
             },
             errors: {
                 404: `The requested series does not exist.`,
@@ -83,30 +80,30 @@ export class DataService {
      */
     public static viewResult(
         series: string,
-        result: string,
+        result: string
     ): CancelablePromise<{
         id?: string;
         timestamp?: string;
         files?: {
-            'zmap-results'?: {
+            "zmap-results"?: {
                 file_type?: string;
                 schema?: any;
                 download_path?: string;
                 sha256_fingerprint?: string;
                 size?: number;
             };
-            'zgrab-results'?: Record<string, any>;
+            "zgrab-results"?: Record<string, any>;
             download_path?: string;
             sha256_fingerprint?: string;
             size?: number;
         };
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/v1/data/{series}/{result}',
+            method: "GET",
+            url: "/v1/data/{series}/{result}",
             path: {
-                'series': series,
-                'result': result,
+                series: series,
+                result: result,
             },
             errors: {
                 404: `The requested series or result does not exist.`,
@@ -115,5 +112,4 @@ export class DataService {
             },
         });
     }
-
 }

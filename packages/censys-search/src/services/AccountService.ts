@@ -1,12 +1,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 
 export class AccountService {
-
     /**
      * Returns information about your account
      * > The Censys legacy v1 API contains API endpoints which are being maintained until replacement v2 endpoints are available.
@@ -27,8 +26,8 @@ export class AccountService {
         };
     }> {
         return __request(OpenAPI, {
-            method: 'GET',
-            url: '/v1/account',
+            method: "GET",
+            url: "/v1/account",
             errors: {
                 403: `Your request did not include a valid Authorization header.`,
                 429: `Your query was not executed because you have exceeded your specified rate limit.`,
@@ -36,5 +35,4 @@ export class AccountService {
             },
         });
     }
-
 }

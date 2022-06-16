@@ -23,4 +23,3 @@ export type Certificate = {
     };
     ct?: any;
 };
-

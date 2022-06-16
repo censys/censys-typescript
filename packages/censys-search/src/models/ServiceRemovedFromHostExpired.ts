@@ -10,11 +10,7 @@ export type ServiceRemovedFromHostExpired = {
 };
 
 export namespace ServiceRemovedFromHostExpired {
-
     export enum _reason {
-        EXPIRED = 'expired',
+        EXPIRED = "expired",
     }
-
-
 }
-

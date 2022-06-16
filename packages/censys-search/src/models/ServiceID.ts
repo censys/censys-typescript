@@ -21,16 +21,12 @@ export type ServiceID = {
 };
 
 export namespace ServiceID {
-
     /**
      * Service transport protocol.
      */
     export enum transport_protocol {
-        TCP = 'TCP',
-        UDP = 'UDP',
-        QUIC = 'QUIC',
+        TCP = "TCP",
+        UDP = "UDP",
+        QUIC = "QUIC",
     }
-
-
 }
-
