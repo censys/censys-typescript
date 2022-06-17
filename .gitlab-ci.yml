@@ -1,0 +1,39 @@
+image: node:latest
+
+before_script:
+  - apt-get update -qq && apt-get install
+
+stages:
+  - build
+  - test
+  # - deploy
+
+.yarn:
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - .yarn-cache/
+  before_script:
+    - echo 'yarn-offline-mirror ".yarn-cache/"' >> .yarnrc
+    - echo 'yarn-offline-mirror-pruning true' >> .yarnrc
+    - yarn install --frozen-lockfile --no-progress
+
+build @censys/search:
+  extends: .yarn
+  stage: build
+  script:
+    - yarn workspace @censys/search run build
+
+test @censys/search:
+  extends: .yarn
+  stage: test
+  script:
+    - yarn run test:search --ci
+  artifacts:
+    when: always
+    paths:
+      - packages/censys-search/junit.xml
+    reports:
+      junit: packages/censys-search/junit.xml

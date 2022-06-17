@@ -119,4 +119,23 @@ describe("CertificatesService", () => {
     });
 
     // TODO: Write tests for SEARCH_ERRORS
+    it.each([
+        [400, SEARCH_ERRORS[400]],
+        [404, SEARCH_ERRORS[404]],
+        [429, SEARCH_ERRORS[429]],
+        [500, SEARCH_ERRORS[500]],
+    ])("should throw a %i error", async (status, errorMessage) => {
+        // Actual call
+        const certificatePromise =
+            CertificatesService.searchCertificates(SEARCH_REQUEST);
+
+        // Mock
+        mock.onPost(SEARCH_PATH, SEARCH_REQUEST, {
+            ...HEADERS,
+            "Content-Type": "application/json",
+        }).reply(status);
+
+        // Assertions
+        await expect(certificatePromise).rejects.toThrowError(errorMessage);
+    });
 });

@@ -12,6 +12,7 @@
     "@types/jest": "^28.1.1",
     "axios-mock-adapter": "^1.21.1",
     "jest": "^28.1.1",
+    "jest-junit": "^13.2.0",
     "prettier": "2.7.0",
     "ts-jest": "^28.0.5",
     "typescript": "^4.7.3"
