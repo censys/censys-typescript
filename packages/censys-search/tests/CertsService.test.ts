@@ -314,15 +314,26 @@ describe("CertsService", () => {
         // Assertions
         await expect(certsPromise).resolves.toEqual(GET_TAGS_BY_CERT_RES);
     });
-
+    //TODO: add tests for the following methods: tagCert, untagCert, and fix the error below
     it("should add a tag on the given certificate.", async () => {
         // Actual call
-        const certsPromise = CertsService.tagCert(FINGERPRINT, "test_tag");
+        const certsPromise = CertsService.tagCert(FINGERPRINT, "tag_id");
 
         // Mock
-        mock.onPost(CERTS_PATH + FINGERPRINT + "/tags/test_tag").reply(200);
+        mock.onPut(CERTS_PATH + FINGERPRINT + "/tags/tag_id").reply(200);
 
         // Assertions
-        await expect(certsPromise).resolves.toHaveBeenCalled();
+        await expect(certsPromise).resolves.toEqual(undefined);
+    });
+
+    it("should remove a tag on the given certificate.", async () => {
+        // Actual call
+        const certsPromise = CertsService.untagCert(FINGERPRINT, "tag_id");
+
+        // Mock
+        mock.onDelete(CERTS_PATH + FINGERPRINT + "/tags/tag_id").reply(200);
+
+        // Assertions
+        await expect(certsPromise).resolves.toEqual(undefined);
     });
 });
