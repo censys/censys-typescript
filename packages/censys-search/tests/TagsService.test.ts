@@ -210,10 +210,10 @@ describe("TagsService", () => {
             BASE_PATH + "/v2/tags/" + tagId,
             undefined,
             HEADERS
-        ).reply(200);
+        ).reply(204);
 
         // Assertions
-        await expect(tagsPromise).resolves.toEqual(undefined);
+        await expect(tagsPromise).resolves.not.toThrow();
     });
 
     it("should return a list of hosts for a tag", async () => {
@@ -280,14 +280,10 @@ describe("TagsService", () => {
         const tagsPromise = TagsService.tagHost(ip, tagId);
 
         // Mock
-        mock.onPut(
-            BASE_PATH + "/v2/hosts/" + ip + "/tags/" + tagId,
-            undefined,
-            HEADERS
-        ).reply(200);
+        mock.onPut(BASE_PATH + "/v2/hosts/" + ip + "/tags/" + tagId).reply(204);
 
         // Assertions
-        await expect(tagsPromise).resolves.toEqual(undefined);
+        await expect(tagsPromise).resolves.not.toThrow();
     });
 
     it("should remove a tag on the given host", async () => {
@@ -303,10 +299,10 @@ describe("TagsService", () => {
             BASE_PATH + "/v2/hosts/" + ip + "/tags/" + tagId,
             undefined,
             HEADERS
-        ).reply(200);
+        ).reply(204);
 
         // Assertions
-        await expect(tagsPromise).resolves.toEqual(undefined);
+        await expect(tagsPromise).resolves.not.toThrow();
     });
 
     it("should return a list of tags on the given certificate", async () => {
@@ -327,7 +323,6 @@ describe("TagsService", () => {
         await expect(tagsPromise).resolves.toEqual(GET_TAGS_BY_CERT_RES);
     });
 
-    //TODO: fix this test
     it("should add a tag on the given certificate", async () => {
         // Test data
         const fingerprint = "test_fingerprint";
@@ -338,13 +333,11 @@ describe("TagsService", () => {
 
         // Mock
         mock.onPut(
-            BASE_PATH + "/v2/certificates/" + fingerprint + "/tags/" + tagId,
-            undefined,
-            HEADERS
-        ).reply(200);
+            BASE_PATH + "/v2/certificates/" + fingerprint + "/tags/" + tagId
+        ).reply(204);
 
         // Assertions
-        await expect(tagsPromise).resolves.toEqual(undefined);
+        await expect(tagsPromise).resolves.not.toThrow();
     });
 
     it("should remove a tag on the given certificate", async () => {
@@ -360,9 +353,9 @@ describe("TagsService", () => {
             BASE_PATH + "/v2/certificates/" + fingerprint + "/tags/" + tagId,
             undefined,
             HEADERS
-        ).reply(200);
+        ).reply(204);
 
         // Assertions
-        await expect(tagsPromise).resolves.toEqual(undefined);
+        await expect(tagsPromise).resolves.not.toThrow();
     });
 });

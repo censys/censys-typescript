@@ -250,7 +250,7 @@ describe("CertsService", () => {
         ).reply(404, DELETE_COMMENT_RES);
 
         // Assertions
-        await expect(certsPromise).rejects.toThrowError(new Error("Not Found"));
+        await expect(certsPromise).rejects.toThrowError("Not Found");
     });
 
     it("should delete a comment on the given certificate.", async () => {
@@ -284,7 +284,7 @@ describe("CertsService", () => {
         ).reply(404, DELETE_COMMENT_RES);
 
         // Assertions
-        await expect(certsPromise).rejects.toThrowError(new Error("Not Found"));
+        await expect(certsPromise).rejects.toThrowError("Not Found");
     });
 
     it("should reurn a list of certificates for a tag", async () => {

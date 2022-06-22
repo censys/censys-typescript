@@ -708,7 +708,7 @@ describe("HostsService", () => {
         ).reply(200);
 
         // Assert
-        await expect(hostsPromise).resolves.toEqual(undefined);
+        await expect(hostsPromise).resolves.not.toThrow();
     });
 
     it.each([
@@ -789,14 +789,10 @@ describe("HostsService", () => {
         const hostsPromise = HostsService.tagHost(IP, "test_tag");
 
         // Mock
-        mock.onPut(
-            BASE_PATH + `/v2/hosts/${IP}/tags/test_tag`,
-            undefined,
-            HEADERS
-        ).reply(200);
+        mock.onPut(BASE_PATH + `/v2/hosts/${IP}/tags/test_tag`).reply(204);
 
         // Assert
-        await expect(hostsPromise).resolves.toEqual(undefined);
+        await expect(hostsPromise).resolves.not.toThrow();
     });
 
     it("should remove a tag on the given host", async () => {
@@ -809,9 +805,9 @@ describe("HostsService", () => {
             BASE_PATH + `/v2/hosts/${IP}/tags/${id}`,
             undefined,
             HEADERS
-        ).reply(200);
+        ).reply(204);
 
         // Assert
-        await expect(hostsPromise).resolves.toEqual(undefined);
+        await expect(hostsPromise).resolves.not.toThrow();
     });
 });
