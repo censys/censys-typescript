@@ -7,7 +7,8 @@
     "postinstall": "husky install",
     "build:search": "openapi -i openapi.yml -o packages/censys-search/src -c axios",
     "format": "prettier --write 'packages/**/*.ts'",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test:search": "yarn workspace @censys/search run test"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.28.0",
