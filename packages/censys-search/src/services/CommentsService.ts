@@ -6,10 +6,11 @@ import type { CertComment } from "../models/CertComment";
 import type { HostComment } from "../models/HostComment";
 
 import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { BaseHttpRequest } from "../core/BaseHttpRequest";
 
 export class CommentsService {
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
+
     /**
      * Returns a list of comments on the given host.
      * Returns a list of comments on the given host.
@@ -18,7 +19,7 @@ export class CommentsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getCommentsByHost(ip: string): CancelablePromise<
+    public getCommentsByHost(ip: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 ip?: string;
@@ -26,7 +27,7 @@ export class CommentsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/hosts/{ip}/comments",
             path: {
@@ -44,7 +45,7 @@ export class CommentsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static addCommentByHost(
+    public addCommentByHost(
         ip: string,
         requestBody: {
             contents?: string;
@@ -54,7 +55,7 @@ export class CommentsService {
             result?: HostComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "POST",
             url: "/v2/hosts/{ip}/comments",
             path: {
@@ -77,7 +78,7 @@ export class CommentsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getCommentByHost(
+    public getCommentByHost(
         ip: string,
         commentId: string
     ): CancelablePromise<
@@ -85,7 +86,7 @@ export class CommentsService {
             result?: HostComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/hosts/{ip}/comments/{comment_id}",
             path: {
@@ -109,7 +110,7 @@ export class CommentsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static updateCommentByHost(
+    public updateCommentByHost(
         ip: string,
         commentId: string,
         requestBody: {
@@ -120,7 +121,7 @@ export class CommentsService {
             result?: HostComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "PUT",
             url: "/v2/hosts/{ip}/comments/{comment_id}",
             path: {
@@ -145,11 +146,11 @@ export class CommentsService {
      * @returns void
      * @throws ApiError
      */
-    public static deleteCommentByHost(
+    public deleteCommentByHost(
         ip: string,
         commentId: string
     ): CancelablePromise<void> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "DELETE",
             url: "/v2/hosts/{ip}/comments/{comment_id}",
             path: {
@@ -171,7 +172,7 @@ export class CommentsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getCommentsByCert(fingerprint: string): CancelablePromise<
+    public getCommentsByCert(fingerprint: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 fingerprint?: string;
@@ -179,7 +180,7 @@ export class CommentsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/certificates/{fingerprint}/comments",
             path: {
@@ -197,7 +198,7 @@ export class CommentsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static addCommentByCert(
+    public addCommentByCert(
         fingerprint: string,
         requestBody: {
             contents?: string;
@@ -207,7 +208,7 @@ export class CommentsService {
             result?: CertComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "POST",
             url: "/v2/certificates/{fingerprint}/comments",
             path: {
@@ -227,7 +228,7 @@ export class CommentsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getCommentByCert(
+    public getCommentByCert(
         fingerprint: string,
         commentId: string
     ): CancelablePromise<
@@ -235,7 +236,7 @@ export class CommentsService {
             result?: CertComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/certificates/{fingerprint}/comments/{comment_id}",
             path: {
@@ -255,7 +256,7 @@ export class CommentsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static updateCommentByCert(
+    public updateCommentByCert(
         fingerprint: string,
         commentId: string,
         requestBody: {
@@ -266,7 +267,7 @@ export class CommentsService {
             result?: CertComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "PUT",
             url: "/v2/certificates/{fingerprint}/comments/{comment_id}",
             path: {
@@ -290,7 +291,7 @@ export class CommentsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static deleteCommentByCert(
+    public deleteCommentByCert(
         fingerprint: string,
         commentId: string
     ): CancelablePromise<
@@ -301,7 +302,7 @@ export class CommentsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "DELETE",
             url: "/v2/certificates/{fingerprint}/comments/{comment_id}",
             path: {

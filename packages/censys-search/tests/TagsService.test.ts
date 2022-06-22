@@ -1,7 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { OpenAPI } from "../src/core/OpenAPI";
-import { TagsService } from "../src/services/TagsService";
+import { CensysSearch } from "../src";
 
 const BASE_PATH = OpenAPI.BASE;
 const HEADERS = {
@@ -107,9 +107,11 @@ const GET_TAGS_BY_CERT_RES = {
 
 describe("TagsService", () => {
     let mock: MockAdapter;
+    let client: CensysSearch;
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
+        client = new CensysSearch();
     });
 
     afterEach(() => {
@@ -118,7 +120,7 @@ describe("TagsService", () => {
 
     it("should return a list of all tags", async () => {
         // Actual call
-        const tagsPromise = TagsService.listTags();
+        const tagsPromise = client.tags.listTags();
 
         // Mock
         mock.onGet(BASE_PATH + "/v2/tags", undefined, HEADERS).reply(
@@ -143,7 +145,7 @@ describe("TagsService", () => {
         };
 
         // Actual call
-        const tagsPromise = TagsService.createTag(tag);
+        const tagsPromise = client.tags.createTag(tag);
 
         // Mock
         mock.onPost(BASE_PATH + "/v2/tags", tag, {
@@ -160,7 +162,7 @@ describe("TagsService", () => {
         const tagId = "test_id";
 
         // Actual call
-        const tagsPromise = TagsService.getTag(tagId);
+        const tagsPromise = client.tags.getTag(tagId);
 
         // Mock
         mock.onGet(BASE_PATH + "/v2/tags/" + tagId, undefined, HEADERS).reply(
@@ -186,7 +188,7 @@ describe("TagsService", () => {
         };
 
         // Actual call
-        const tagsPromise = TagsService.updateTag(tagId, tag);
+        const tagsPromise = client.tags.updateTag(tagId, tag);
 
         // Mock
         mock.onPut(BASE_PATH + "/v2/tags/" + tagId, tag, {
@@ -203,7 +205,7 @@ describe("TagsService", () => {
         const tagId = "test_id";
 
         // Actual call
-        const tagsPromise = TagsService.deleteTag(tagId);
+        const tagsPromise = client.tags.deleteTag(tagId);
 
         // Mock
         mock.onDelete(
@@ -221,7 +223,7 @@ describe("TagsService", () => {
         const tagId = "test_id";
 
         // Actual call
-        const tagsPromise = TagsService.listHostsForTag(tagId);
+        const tagsPromise = client.tags.listHostsForTag(tagId);
 
         // Mock
         mock.onGet(
@@ -239,7 +241,7 @@ describe("TagsService", () => {
         const tagId = "test_id";
 
         // Actual call
-        const tagsPromise = TagsService.listCertificatesForTag(tagId);
+        const tagsPromise = client.tags.listCertificatesForTag(tagId);
 
         // Mock
         mock.onGet(
@@ -257,7 +259,7 @@ describe("TagsService", () => {
         const ip = "8.8.8.8";
 
         // Actual call
-        const tagsPromise = TagsService.getTagsByHost(ip);
+        const tagsPromise = client.tags.getTagsByHost(ip);
 
         // Mock
         mock.onGet(
@@ -277,7 +279,7 @@ describe("TagsService", () => {
         const tagId = "test_id";
 
         // Actual call
-        const tagsPromise = TagsService.tagHost(ip, tagId);
+        const tagsPromise = client.tags.tagHost(ip, tagId);
 
         // Mock
         mock.onPut(BASE_PATH + "/v2/hosts/" + ip + "/tags/" + tagId).reply(204);
@@ -292,7 +294,7 @@ describe("TagsService", () => {
         const tagId = "test_id";
 
         // Actual call
-        const tagsPromise = TagsService.untagHost(ip, tagId);
+        const tagsPromise = client.tags.untagHost(ip, tagId);
 
         // Mock
         mock.onDelete(
@@ -310,7 +312,7 @@ describe("TagsService", () => {
         const fingerprint = "test_fingerprint";
 
         // Actual call
-        const tagsPromise = TagsService.getTagsByCert(fingerprint);
+        const tagsPromise = client.tags.getTagsByCert(fingerprint);
 
         // Mock
         mock.onGet(
@@ -329,7 +331,7 @@ describe("TagsService", () => {
         const tagId = "test_id";
 
         // Actual call
-        const tagsPromise = TagsService.tagCert(fingerprint, tagId);
+        const tagsPromise = client.tags.tagCert(fingerprint, tagId);
 
         // Mock
         mock.onPut(
@@ -346,7 +348,7 @@ describe("TagsService", () => {
         const tagId = "test_id";
 
         // Actual call
-        const tagsPromise = TagsService.untagCert(fingerprint, tagId);
+        const tagsPromise = client.tags.untagCert(fingerprint, tagId);
 
         // Mock
         mock.onDelete(

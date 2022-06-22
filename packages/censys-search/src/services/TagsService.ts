@@ -5,24 +5,25 @@ import type { ApiResponse } from "../models/ApiResponse";
 import type { Tag } from "../models/Tag";
 
 import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { BaseHttpRequest } from "../core/BaseHttpRequest";
 
 export class TagsService {
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
+
     /**
      * Returns a list of all tags
      * Returns a list of all tags for a team
      * @returns any OK
      * @throws ApiError
      */
-    public static listTags(): CancelablePromise<
+    public listTags(): CancelablePromise<
         ApiResponse & {
             result?: {
                 tags?: Array<Tag>;
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/tags",
         });
@@ -35,12 +36,12 @@ export class TagsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static createTag(requestBody: Tag): CancelablePromise<
+    public createTag(requestBody: Tag): CancelablePromise<
         ApiResponse & {
             result?: Tag;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "POST",
             url: "/v2/tags",
             body: requestBody,
@@ -55,12 +56,12 @@ export class TagsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getTag(id: string): CancelablePromise<
+    public getTag(id: string): CancelablePromise<
         ApiResponse & {
             result?: Tag;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/tags/{id}",
             path: {
@@ -77,7 +78,7 @@ export class TagsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static updateTag(
+    public updateTag(
         id: string,
         requestBody: Tag
     ): CancelablePromise<
@@ -85,7 +86,7 @@ export class TagsService {
             result?: Tag;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "PUT",
             url: "/v2/tags/{id}",
             path: {
@@ -103,8 +104,8 @@ export class TagsService {
      * @returns void
      * @throws ApiError
      */
-    public static deleteTag(id: string): CancelablePromise<void> {
-        return __request(OpenAPI, {
+    public deleteTag(id: string): CancelablePromise<void> {
+        return this.httpRequest.request({
             method: "DELETE",
             url: "/v2/tags/{id}",
             path: {
@@ -120,7 +121,7 @@ export class TagsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static listHostsForTag(id: string): CancelablePromise<
+    public listHostsForTag(id: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 hosts?: Array<{
@@ -130,7 +131,7 @@ export class TagsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/tags/{id}/hosts",
             path: {
@@ -146,7 +147,7 @@ export class TagsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static listCertificatesForTag(id: string): CancelablePromise<
+    public listCertificatesForTag(id: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 certs?: Array<{
@@ -156,7 +157,7 @@ export class TagsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/tags/{id}/certificates",
             path: {
@@ -173,7 +174,7 @@ export class TagsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getTagsByHost(ip: string): CancelablePromise<
+    public getTagsByHost(ip: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 ip?: string;
@@ -181,7 +182,7 @@ export class TagsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/hosts/{ip}/tags",
             path: {
@@ -199,8 +200,8 @@ export class TagsService {
      * @returns void
      * @throws ApiError
      */
-    public static tagHost(ip: string, id: string): CancelablePromise<void> {
-        return __request(OpenAPI, {
+    public tagHost(ip: string, id: string): CancelablePromise<void> {
+        return this.httpRequest.request({
             method: "PUT",
             url: "/v2/hosts/{ip}/tags/{id}",
             path: {
@@ -219,8 +220,8 @@ export class TagsService {
      * @returns void
      * @throws ApiError
      */
-    public static untagHost(ip: string, id: string): CancelablePromise<void> {
-        return __request(OpenAPI, {
+    public untagHost(ip: string, id: string): CancelablePromise<void> {
+        return this.httpRequest.request({
             method: "DELETE",
             url: "/v2/hosts/{ip}/tags/{id}",
             path: {
@@ -238,7 +239,7 @@ export class TagsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getTagsByCert(fingerprint: string): CancelablePromise<
+    public getTagsByCert(fingerprint: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 fingerprint?: string;
@@ -246,7 +247,7 @@ export class TagsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/certificates/{fingerprint}/tags",
             path: {
@@ -264,11 +265,8 @@ export class TagsService {
      * @returns void
      * @throws ApiError
      */
-    public static tagCert(
-        fingerprint: string,
-        id: string
-    ): CancelablePromise<void> {
-        return __request(OpenAPI, {
+    public tagCert(fingerprint: string, id: string): CancelablePromise<void> {
+        return this.httpRequest.request({
             method: "PUT",
             url: "/v2/certificates/{fingerprint}/tags/{id}",
             path: {
@@ -287,11 +285,8 @@ export class TagsService {
      * @returns void
      * @throws ApiError
      */
-    public static untagCert(
-        fingerprint: string,
-        id: string
-    ): CancelablePromise<void> {
-        return __request(OpenAPI, {
+    public untagCert(fingerprint: string, id: string): CancelablePromise<void> {
+        return this.httpRequest.request({
             method: "DELETE",
             url: "/v2/certificates/{fingerprint}/tags/{id}",
             path: {

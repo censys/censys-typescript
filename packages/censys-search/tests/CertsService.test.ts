@@ -1,8 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { OpenAPI } from "../src/core/OpenAPI";
-import { CertsService } from "../src/services/CertsService";
-
+import { CensysSearch } from "../src";
 /*
  * Docs: https://www.npmjs.com/package/axios-mock-adapter
  */
@@ -138,9 +137,11 @@ const GET_TAGS_BY_CERT_RES = {
 
 describe("CertsService", () => {
     let mock: MockAdapter;
+    let client: CensysSearch;
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
+        client = new CensysSearch();
     });
 
     afterEach(() => {
@@ -152,7 +153,7 @@ describe("CertsService", () => {
         const cursor = "test_cursor";
 
         // Actual call
-        const certsPromise = CertsService.getHostsByCert(FINGERPRINT, cursor);
+        const certsPromise = client.certs.getHostsByCert(FINGERPRINT, cursor);
 
         // Mock
         mock.onGet(
@@ -167,7 +168,7 @@ describe("CertsService", () => {
 
     it("Returns a list of comments on the given certificate.", async () => {
         // Actual call
-        const certsPromise = CertsService.getCommentsByCert(FINGERPRINT);
+        const certsPromise = client.certs.getCommentsByCert(FINGERPRINT);
 
         // Mock
         mock.onGet(
@@ -182,7 +183,7 @@ describe("CertsService", () => {
 
     it("should add a comment on the given certificate.", async () => {
         // Actual call
-        const certsPromise = CertsService.addCommentByCert(
+        const certsPromise = client.certs.addCommentByCert(
             FINGERPRINT,
             CERTS_REQUEST
         );
@@ -199,7 +200,7 @@ describe("CertsService", () => {
 
     it("should return a comment on the given certificate.", async () => {
         // Actual call
-        const certsPromise = CertsService.getCommentByCert(
+        const certsPromise = client.certs.getCommentByCert(
             FINGERPRINT,
             "test_id"
         );
@@ -217,7 +218,7 @@ describe("CertsService", () => {
 
     it("should update a comment on the given certificate.", async () => {
         // Actual call
-        const certsPromise = CertsService.updateCommentByCert(
+        const certsPromise = client.certs.updateCommentByCert(
             FINGERPRINT,
             "test_id",
             UPDATE_COMMENT_REQUEST
@@ -236,7 +237,7 @@ describe("CertsService", () => {
 
     it("should throw an error", async () => {
         // Actual call
-        const certsPromise = CertsService.updateCommentByCert(
+        const certsPromise = client.certs.updateCommentByCert(
             FINGERPRINT,
             "test_id",
             UPDATE_COMMENT_REQUEST
@@ -255,7 +256,7 @@ describe("CertsService", () => {
 
     it("should delete a comment on the given certificate.", async () => {
         // Actual call
-        const certsPromise = CertsService.deleteCommentByCert(
+        const certsPromise = client.certs.deleteCommentByCert(
             FINGERPRINT,
             "test_id"
         );
@@ -272,7 +273,7 @@ describe("CertsService", () => {
 
     it("delete comment should throw an error", async () => {
         // Actual call
-        const certsPromise = CertsService.deleteCommentByCert(
+        const certsPromise = client.certs.deleteCommentByCert(
             FINGERPRINT,
             "test_id"
         );
@@ -289,7 +290,7 @@ describe("CertsService", () => {
 
     it("should reurn a list of certificates for a tag", async () => {
         // Actual call
-        const certsPromise = CertsService.listCertificatesForTag("test_tag");
+        const certsPromise = client.certs.listCertificatesForTag("test_tag");
 
         // Mock
         mock.onGet(
@@ -303,7 +304,7 @@ describe("CertsService", () => {
 
     it("should return a list of tags on the given certificate.", async () => {
         // Actual call
-        const certsPromise = CertsService.getTagsByCert(FINGERPRINT);
+        const certsPromise = client.certs.getTagsByCert(FINGERPRINT);
 
         // Mock
         mock.onGet(CERTS_PATH + FINGERPRINT + "/tags", HEADERS).reply(
@@ -316,7 +317,7 @@ describe("CertsService", () => {
     });
     it("should add a tag on the given certificate.", async () => {
         // Actual call
-        const certsPromise = CertsService.tagCert(FINGERPRINT, "tag_id");
+        const certsPromise = client.certs.tagCert(FINGERPRINT, "tag_id");
 
         // Mock
         mock.onPut(CERTS_PATH + FINGERPRINT + "/tags/tag_id").reply(200);
@@ -327,7 +328,7 @@ describe("CertsService", () => {
 
     it("should remove a tag on the given certificate.", async () => {
         // Actual call
-        const certsPromise = CertsService.untagCert(FINGERPRINT, "tag_id");
+        const certsPromise = client.certs.untagCert(FINGERPRINT, "tag_id");
 
         // Mock
         mock.onDelete(CERTS_PATH + FINGERPRINT + "/tags/tag_id").reply(200);

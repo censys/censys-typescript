@@ -1,8 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { OpenAPI } from "../src/core/OpenAPI";
-import { HostsService } from "../src/services/HostsService";
-
+import { CensysSearch } from "../src";
 const Q = "test_query";
 const IP = "8.8.8.8";
 const IPB = "1.1.1.1";
@@ -283,9 +282,11 @@ const GET_TAGS_BY_HOST_RES = {
 
 describe("HostsService", () => {
     let mock: MockAdapter;
+    let client: CensysSearch;
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
+        client = new CensysSearch();
     });
 
     afterEach(() => {
@@ -294,7 +295,7 @@ describe("HostsService", () => {
 
     it("should return previews of hosts matching a specified search query", async () => {
         // Actual call
-        const hostsPromise = HostsService.searchHosts(
+        const hostsPromise = client.hosts.searchHosts(
             Q,
             1,
             "EXCLUDE",
@@ -319,7 +320,7 @@ describe("HostsService", () => {
         [422, SEARCH_HOSTS_ERRORS[422]],
     ])("searchHosts should throw errors", async (status, errorMessage) => {
         // Actual call
-        const hostsPromise = HostsService.searchHosts(
+        const hostsPromise = client.hosts.searchHosts(
             Q,
             1,
             "EXCLUDE",
@@ -340,7 +341,7 @@ describe("HostsService", () => {
 
     it("should return aggregation of hosts that match the given query string", async () => {
         // Actual call
-        const hostsPromise = HostsService.aggregateHosts(
+        const hostsPromise = client.hosts.aggregateHosts(
             "test_field",
             Q,
             1,
@@ -364,7 +365,7 @@ describe("HostsService", () => {
         [401, AGGREGATE_HOSTS_ERRORS[401]],
     ])("aggregateHosts should throw errors", async (status, errorMessage) => {
         // Actual call
-        const hostsPromise = HostsService.aggregateHosts(
+        const hostsPromise = client.hosts.aggregateHosts(
             "test_field",
             Q,
             1,
@@ -385,7 +386,7 @@ describe("HostsService", () => {
 
     it("should return host information for the specified IP address", async () => {
         // Actual call
-        const hostsPromise = HostsService.viewHost(IP, "01-01-2022");
+        const hostsPromise = client.hosts.viewHost(IP, "01-01-2022");
 
         // Mock
         mock.onGet(
@@ -403,7 +404,7 @@ describe("HostsService", () => {
         [422, VIEW_HOST_ERRORS[422]],
     ])("viewHost should throw errors", async (status, errorMessage) => {
         // Actual call
-        const hostsPromise = HostsService.viewHost(IP, "01-01-2022");
+        const hostsPromise = client.hosts.viewHost(IP, "01-01-2022");
 
         // Mock
         mock.onGet(
@@ -422,7 +423,7 @@ describe("HostsService", () => {
         const atTimeB = "01-02-2022";
 
         // Actual call
-        const hostsPromise = HostsService.viewHostDiff(
+        const hostsPromise = client.hosts.viewHostDiff(
             IP,
             IPB,
             atTime,
@@ -446,7 +447,7 @@ describe("HostsService", () => {
         [422, VIEW_HOST_DIFF_ERRORS[422]],
     ])("viewHostDiff should throw errors", async (status, errorMessage) => {
         // Actual call
-        const hostsPromise = HostsService.viewHostDiff(
+        const hostsPromise = client.hosts.viewHostDiff(
             IP,
             IPB,
             "01-01-2022",
@@ -473,7 +474,7 @@ describe("HostsService", () => {
         const cursor = "test_cursor";
         const reversed = true;
         // Actual call
-        const hostsPromise = HostsService.viewHostEvents(
+        const hostsPromise = client.hosts.viewHostEvents(
             IP,
             start_time,
             end_time,
@@ -499,7 +500,7 @@ describe("HostsService", () => {
         [422, VIEW_HOST_EVENTS_ERRORS[422]],
     ])("viewHostEvents should throw errors", async (status, errorMessage) => {
         // Actual call
-        const hostsPromise = HostsService.viewHostEvents(
+        const hostsPromise = client.hosts.viewHostEvents(
             IP,
             "01-01-2022",
             "01-02-2022",
@@ -526,7 +527,7 @@ describe("HostsService", () => {
         const cursor = "test_cursor";
 
         // Actual call
-        const hostsPromise = HostsService.viewHostNames(IP, perPage, cursor);
+        const hostsPromise = client.hosts.viewHostNames(IP, perPage, cursor);
 
         // Mock
         mock.onGet(
@@ -544,7 +545,7 @@ describe("HostsService", () => {
         "viewHostNames should throw errors",
         async (status, errorMessage) => {
             // Actual call
-            const hostsPromise = HostsService.viewHostNames(
+            const hostsPromise = client.hosts.viewHostNames(
                 IP,
                 1,
                 "test_cursor"
@@ -565,7 +566,7 @@ describe("HostsService", () => {
 
     it("should return a list of comments on the given host", async () => {
         // Actual call
-        const hostsPromise = HostsService.getCommentsByHost(IP);
+        const hostsPromise = client.hosts.getCommentsByHost(IP);
 
         // Mock
         mock.onGet(
@@ -580,7 +581,7 @@ describe("HostsService", () => {
 
     it("should add a comment to the given host", async () => {
         // Actual call
-        const hostsPromise = HostsService.addCommentByHost(IP, REQUEST_BODY);
+        const hostsPromise = client.hosts.addCommentByHost(IP, REQUEST_BODY);
 
         // Mock
         mock.onPost(BASE_PATH + `/v2/hosts/${IP}/comments`, REQUEST_BODY, {
@@ -594,7 +595,7 @@ describe("HostsService", () => {
 
     it("addCommentByHost should throw an error", async () => {
         // Actual call
-        const hostsPromise = HostsService.addCommentByHost(IP, REQUEST_BODY);
+        const hostsPromise = client.hosts.addCommentByHost(IP, REQUEST_BODY);
 
         // Mock
         mock.onPost(BASE_PATH + `/v2/hosts/${IP}/comments`, REQUEST_BODY, {
@@ -611,7 +612,7 @@ describe("HostsService", () => {
     it("should return a specific comment on the given host", async () => {
         // Actual call
         const comment_id = "test_comment_id";
-        const hostsPromise = HostsService.getCommentByHost(IP, comment_id);
+        const hostsPromise = client.hosts.getCommentByHost(IP, comment_id);
 
         // Mock
         mock.onGet(
@@ -630,7 +631,7 @@ describe("HostsService", () => {
     ])("getCommentByHost should throw errors", async (status, errorMessage) => {
         // Actual call
         const comment_id = "test_comment_id";
-        const hostsPromise = HostsService.getCommentByHost(IP, comment_id);
+        const hostsPromise = client.hosts.getCommentByHost(IP, comment_id);
 
         // Mock
         mock.onGet(
@@ -646,7 +647,7 @@ describe("HostsService", () => {
     it("should update a specific comment on the given host", async () => {
         // Actual call
         const comment_id = "test_comment_id";
-        const hostsPromise = HostsService.updateCommentByHost(
+        const hostsPromise = client.hosts.updateCommentByHost(
             IP,
             comment_id,
             REQUEST_BODY
@@ -674,7 +675,7 @@ describe("HostsService", () => {
         async (status, errorMessage) => {
             // Actual call
             const comment_id = "test_comment_id";
-            const hostsPromise = HostsService.updateCommentByHost(
+            const hostsPromise = client.hosts.updateCommentByHost(
                 IP,
                 comment_id,
                 REQUEST_BODY
@@ -698,7 +699,7 @@ describe("HostsService", () => {
     it("should delete a specific comment on the given host", async () => {
         // Actual call
         const comment_id = "test_comment_id";
-        const hostsPromise = HostsService.deleteCommentByHost(IP, comment_id);
+        const hostsPromise = client.hosts.deleteCommentByHost(IP, comment_id);
 
         // Mock
         mock.onDelete(
@@ -719,7 +720,7 @@ describe("HostsService", () => {
         async (status, errorMessage) => {
             // Actual call
             const comment_id = "test_comment_id";
-            const hostsPromise = HostsService.deleteCommentByHost(
+            const hostsPromise = client.hosts.deleteCommentByHost(
                 IP,
                 comment_id
             );
@@ -738,7 +739,7 @@ describe("HostsService", () => {
 
     it("should return host metatdata about what Censys scans for", async () => {
         // Actual call
-        const hostsPromise = HostsService.getHostMetadata();
+        const hostsPromise = client.hosts.getHostMetadata();
 
         // Mock
         mock.onGet(BASE_PATH + `/v2/metadata/hosts`, undefined, HEADERS).reply(
@@ -755,7 +756,7 @@ describe("HostsService", () => {
         const id = "test_id";
 
         // Actual call
-        const hostsPromise = HostsService.listHostsForTag(id);
+        const hostsPromise = client.hosts.listHostsForTag(id);
 
         // Mock
         mock.onGet(
@@ -770,7 +771,7 @@ describe("HostsService", () => {
 
     it("should return a list of tags on the given host", async () => {
         // Actual call
-        const hostsPromise = HostsService.getTagsByHost(IP);
+        const hostsPromise = client.hosts.getTagsByHost(IP);
 
         // Mock
         mock.onGet(
@@ -786,7 +787,7 @@ describe("HostsService", () => {
     //TODO fix this test
     it("should add a tag to the given host", async () => {
         // Actual call
-        const hostsPromise = HostsService.tagHost(IP, "test_tag");
+        const hostsPromise = client.hosts.tagHost(IP, "test_tag");
 
         // Mock
         mock.onPut(BASE_PATH + `/v2/hosts/${IP}/tags/test_tag`).reply(204);
@@ -798,7 +799,7 @@ describe("HostsService", () => {
     it("should remove a tag on the given host", async () => {
         // Actual call
         const id = "test_id";
-        const hostsPromise = HostsService.untagHost(IP, id);
+        const hostsPromise = client.hosts.untagHost(IP, id);
 
         // Mock
         mock.onDelete(

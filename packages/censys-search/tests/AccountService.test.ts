@@ -1,7 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { OpenAPI } from "../src/core/OpenAPI";
-import { AccountService } from "../src/services/AccountService";
+import { CensysSearch } from "../src";
 
 const ACCOUNT_RES = {
     email: "test@example.com",
@@ -27,9 +27,11 @@ const HEADERS = {
 
 describe("AccountService", () => {
     let mock: MockAdapter;
+    let client: CensysSearch;
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
+        client = new CensysSearch();
     });
 
     afterEach(() => {
@@ -38,7 +40,7 @@ describe("AccountService", () => {
 
     it("should fetch account details", async () => {
         // Actual call
-        const accountPromise = AccountService.account();
+        const accountPromise = client.account.account();
 
         // Mock
         mock.onGet(ACCOUNT_PATH, undefined, HEADERS).reply(200, ACCOUNT_RES);
@@ -49,7 +51,7 @@ describe("AccountService", () => {
 
     it("should throw a 403 error", async () => {
         // Actual call
-        const accountPromise = AccountService.account();
+        const accountPromise = client.account.account();
 
         // Mock
         mock.onGet(ACCOUNT_PATH, undefined, HEADERS).reply(403);
@@ -62,7 +64,7 @@ describe("AccountService", () => {
 
     it("should throw a 429 error", async () => {
         // Actual call
-        const accountPromise = AccountService.account();
+        const accountPromise = client.account.account();
 
         // Mock
         mock.onGet(ACCOUNT_PATH, undefined, HEADERS).reply(429);
@@ -75,7 +77,7 @@ describe("AccountService", () => {
 
     it("should throw a 500 error", async () => {
         // Actual call
-        const accountPromise = AccountService.account();
+        const accountPromise = client.account.account();
 
         // Mock
         mock.onGet(ACCOUNT_PATH, undefined, HEADERS).reply(500);

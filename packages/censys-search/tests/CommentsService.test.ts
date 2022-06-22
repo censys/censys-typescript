@@ -1,7 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { OpenAPI } from "../src/core/OpenAPI";
-import { CommentsService } from "../src/services/CommentsService";
+import { CensysSearch } from "../src";
 
 const API_RESPONSE = {
     code: 200,
@@ -89,9 +89,11 @@ const ADD_COMMENT_BY_CERT_RES = {
 
 describe("CommentsService", () => {
     let mock: MockAdapter;
+    let client: CensysSearch;
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
+        client = new CensysSearch();
     });
 
     afterEach(() => {
@@ -100,7 +102,7 @@ describe("CommentsService", () => {
 
     it("should get comments by host", async () => {
         // Actual call
-        const commentsPromise = CommentsService.getCommentsByHost(IP);
+        const commentsPromise = client.comments.getCommentsByHost(IP);
 
         // Mock
         const PATH = OpenAPI.BASE + `/v2/hosts/${IP}/comments`;
@@ -117,7 +119,7 @@ describe("CommentsService", () => {
 
     it("should add a comment on the given host", async () => {
         // Actual call
-        const commentsPromise = CommentsService.addCommentByHost(
+        const commentsPromise = client.comments.addCommentByHost(
             IP,
             REQUEST_BODY
         );
@@ -135,7 +137,7 @@ describe("CommentsService", () => {
 
     it("addCommentByHost should throw an error if the request fails", async () => {
         // Actual call
-        const commentsPromise = CommentsService.addCommentByHost(
+        const commentsPromise = client.comments.addCommentByHost(
             IP,
             REQUEST_BODY
         );
@@ -155,7 +157,7 @@ describe("CommentsService", () => {
 
     it("should return a specific comment on the given host", async () => {
         // Actual call
-        const commentsPromise = CommentsService.getCommentByHost(IP, "test_id");
+        const commentsPromise = client.comments.getCommentByHost(IP, "test_id");
 
         // Mock
         const PATH = OpenAPI.BASE + `/v2/hosts/${IP}/comments/test_id`;
@@ -171,7 +173,7 @@ describe("CommentsService", () => {
         "should throw an error if the request fails with status %i",
         async (status, errorMessage) => {
             // Actual call
-            const commentsPromise = CommentsService.getCommentByHost(
+            const commentsPromise = client.comments.getCommentByHost(
                 IP,
                 "test_id"
             );
@@ -187,7 +189,7 @@ describe("CommentsService", () => {
 
     it("should update a specific comment on the given host", async () => {
         // Actual call
-        const commentsPromise = CommentsService.updateCommentByHost(
+        const commentsPromise = client.comments.updateCommentByHost(
             IP,
             "test_id",
             REQUEST_BODY
@@ -211,7 +213,7 @@ describe("CommentsService", () => {
         "should throw an error if the request fails with status %i",
         async (status, errorMessage) => {
             // Actual call
-            const commentsPromise = CommentsService.updateCommentByHost(
+            const commentsPromise = client.comments.updateCommentByHost(
                 IP,
                 "test_id",
                 REQUEST_BODY
@@ -231,7 +233,7 @@ describe("CommentsService", () => {
 
     it("should delete a specific comment on the given host", async () => {
         // Actual call
-        const commentsPromise = CommentsService.deleteCommentByHost(
+        const commentsPromise = client.comments.deleteCommentByHost(
             IP,
             "test_id"
         );
@@ -251,7 +253,7 @@ describe("CommentsService", () => {
         "should throw an error if the request fails with status %i",
         async (status, errorMessage) => {
             // Actual call
-            const commentsPromise = CommentsService.deleteCommentByHost(
+            const commentsPromise = client.comments.deleteCommentByHost(
                 IP,
                 "test_id"
             );
@@ -267,7 +269,7 @@ describe("CommentsService", () => {
 
     it("should return a list of comments on the given cert", async () => {
         // Actual call
-        const commentsPromise = CommentsService.getCommentsByCert(FINGERPRINT);
+        const commentsPromise = client.comments.getCommentsByCert(FINGERPRINT);
 
         // Mock
         const PATH = OpenAPI.BASE + `/v2/certificates/${FINGERPRINT}/comments`;
@@ -284,7 +286,7 @@ describe("CommentsService", () => {
 
     it("should add a comment on the given certificate", async () => {
         // Actual call
-        const commentsPromise = CommentsService.addCommentByCert(
+        const commentsPromise = client.comments.addCommentByCert(
             FINGERPRINT,
             REQUEST_BODY
         );
@@ -302,7 +304,7 @@ describe("CommentsService", () => {
 
     it("should return a comment on the given certificate", async () => {
         // Actual call
-        const commentsPromise = CommentsService.getCommentByCert(
+        const commentsPromise = client.comments.getCommentByCert(
             FINGERPRINT,
             "test_id"
         );
@@ -321,7 +323,7 @@ describe("CommentsService", () => {
 
     it("should update a comment on the given certificate", async () => {
         // Actual call
-        const commentsPromise = CommentsService.updateCommentByCert(
+        const commentsPromise = client.comments.updateCommentByCert(
             FINGERPRINT,
             "test_id",
             REQUEST_BODY
@@ -341,7 +343,7 @@ describe("CommentsService", () => {
 
     it("should throw a 404 error", async () => {
         // Actual call
-        const commentsPromise = CommentsService.updateCommentByCert(
+        const commentsPromise = client.comments.updateCommentByCert(
             FINGERPRINT,
             "test_id",
             REQUEST_BODY
@@ -361,7 +363,7 @@ describe("CommentsService", () => {
 
     it("should delete a comment on the given certificate", async () => {
         // Actual call
-        const commentsPromise = CommentsService.deleteCommentByCert(
+        const commentsPromise = client.comments.deleteCommentByCert(
             FINGERPRINT,
             "test_id"
         );
@@ -382,7 +384,7 @@ describe("CommentsService", () => {
 
     it("deleteCommentByCert should throw a 404 error", async () => {
         // Actual call
-        const commentsPromise = CommentsService.deleteCommentByCert(
+        const commentsPromise = client.comments.deleteCommentByCert(
             FINGERPRINT,
             "test_id"
         );

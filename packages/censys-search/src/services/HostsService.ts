@@ -10,10 +10,11 @@ import type { Tag } from "../models/Tag";
 import type { VirtualHostHit } from "../models/VirtualHostHit";
 
 import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { BaseHttpRequest } from "../core/BaseHttpRequest";
 
 export class HostsService {
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
+
     /**
      * Returns previews of hosts matching a specified search query
      * Accepts queries for host or service attributes provided in the Censys Search Language and returns a list of matching hosts with some summary fields.
@@ -48,7 +49,7 @@ export class HostsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static searchHosts(
+    public searchHosts(
         q?: string,
         perPage: number = 50,
         virtualHosts: "EXCLUDE" | "INCLUDE" | "ONLY" = "EXCLUDE",
@@ -66,7 +67,7 @@ export class HostsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/hosts/search",
             query: {
@@ -98,7 +99,7 @@ export class HostsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static aggregateHosts(
+    public aggregateHosts(
         field: string,
         q?: string,
         numBuckets: number = 50,
@@ -118,7 +119,7 @@ export class HostsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/hosts/aggregate",
             query: {
@@ -143,7 +144,7 @@ export class HostsService {
      * @returns any The host was successfully retrieved.
      * @throws ApiError
      */
-    public static viewHost(
+    public viewHost(
         ip: string,
         atTime?: string
     ): CancelablePromise<
@@ -155,7 +156,7 @@ export class HostsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/hosts/{ip}",
             path: {
@@ -196,7 +197,7 @@ export class HostsService {
      * @returns any A diff was successfully generated for the given host(s).
      * @throws ApiError
      */
-    public static viewHostDiff(
+    public viewHostDiff(
         ip: string,
         ipB?: string,
         atTime?: string,
@@ -228,7 +229,7 @@ export class HostsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/hosts/{ip}/diff",
             path: {
@@ -290,7 +291,7 @@ export class HostsService {
      * @returns any Events for the host were sucessfully retrieved.
      * @throws ApiError
      */
-    public static viewHostEvents(
+    public viewHostEvents(
         ip: string,
         startTime?: string,
         endTime?: string,
@@ -305,7 +306,7 @@ export class HostsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/experimental/hosts/{ip}/events",
             path: {
@@ -334,7 +335,7 @@ export class HostsService {
      * @returns any The host names were successfully retrieved.
      * @throws ApiError
      */
-    public static viewHostNames(
+    public viewHostNames(
         ip: string,
         perPage: number = 100,
         cursor?: string
@@ -348,7 +349,7 @@ export class HostsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/hosts/{ip}/names",
             path: {
@@ -372,7 +373,7 @@ export class HostsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getCommentsByHost(ip: string): CancelablePromise<
+    public getCommentsByHost(ip: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 ip?: string;
@@ -380,7 +381,7 @@ export class HostsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/hosts/{ip}/comments",
             path: {
@@ -398,7 +399,7 @@ export class HostsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static addCommentByHost(
+    public addCommentByHost(
         ip: string,
         requestBody: {
             contents?: string;
@@ -408,7 +409,7 @@ export class HostsService {
             result?: HostComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "POST",
             url: "/v2/hosts/{ip}/comments",
             path: {
@@ -431,7 +432,7 @@ export class HostsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getCommentByHost(
+    public getCommentByHost(
         ip: string,
         commentId: string
     ): CancelablePromise<
@@ -439,7 +440,7 @@ export class HostsService {
             result?: HostComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/hosts/{ip}/comments/{comment_id}",
             path: {
@@ -463,7 +464,7 @@ export class HostsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static updateCommentByHost(
+    public updateCommentByHost(
         ip: string,
         commentId: string,
         requestBody: {
@@ -474,7 +475,7 @@ export class HostsService {
             result?: HostComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "PUT",
             url: "/v2/hosts/{ip}/comments/{comment_id}",
             path: {
@@ -499,11 +500,11 @@ export class HostsService {
      * @returns void
      * @throws ApiError
      */
-    public static deleteCommentByHost(
+    public deleteCommentByHost(
         ip: string,
         commentId: string
     ): CancelablePromise<void> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "DELETE",
             url: "/v2/hosts/{ip}/comments/{comment_id}",
             path: {
@@ -523,14 +524,14 @@ export class HostsService {
      * @returns any The metadata was retrieved.
      * @throws ApiError
      */
-    public static getHostMetadata(): CancelablePromise<
+    public getHostMetadata(): CancelablePromise<
         ApiResponse & {
             result?: {
                 services?: Array<string>;
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/metadata/hosts",
         });
@@ -543,7 +544,7 @@ export class HostsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static listHostsForTag(id: string): CancelablePromise<
+    public listHostsForTag(id: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 hosts?: Array<{
@@ -553,7 +554,7 @@ export class HostsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/tags/{id}/hosts",
             path: {
@@ -570,7 +571,7 @@ export class HostsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getTagsByHost(ip: string): CancelablePromise<
+    public getTagsByHost(ip: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 ip?: string;
@@ -578,7 +579,7 @@ export class HostsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/hosts/{ip}/tags",
             path: {
@@ -596,8 +597,8 @@ export class HostsService {
      * @returns void
      * @throws ApiError
      */
-    public static tagHost(ip: string, id: string): CancelablePromise<void> {
-        return __request(OpenAPI, {
+    public tagHost(ip: string, id: string): CancelablePromise<void> {
+        return this.httpRequest.request({
             method: "PUT",
             url: "/v2/hosts/{ip}/tags/{id}",
             path: {
@@ -616,8 +617,8 @@ export class HostsService {
      * @returns void
      * @throws ApiError
      */
-    public static untagHost(ip: string, id: string): CancelablePromise<void> {
-        return __request(OpenAPI, {
+    public untagHost(ip: string, id: string): CancelablePromise<void> {
+        return this.httpRequest.request({
             method: "DELETE",
             url: "/v2/hosts/{ip}/tags/{id}",
             path: {

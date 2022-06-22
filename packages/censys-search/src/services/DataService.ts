@@ -2,10 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { BaseHttpRequest } from "../core/BaseHttpRequest";
 
 export class DataService {
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
+
     /**
      * Returns data on the types of scans (series) we perform
      * > The Censys legacy v1 API contains API endpoints which are being maintained until replacement v2 endpoints are available.
@@ -14,11 +15,11 @@ export class DataService {
      * @returns any We were able to successfully retrieve a list of series.
      * @throws ApiError
      */
-    public static getSeries(): CancelablePromise<{
+    public getSeries(): CancelablePromise<{
         primary_series?: Record<string, string>;
         raw_series?: Record<string, string>;
     }> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v1/data",
             errors: {
@@ -37,7 +38,7 @@ export class DataService {
      * @returns any We were able to successfully retrieve a series.
      * @throws ApiError
      */
-    public static viewSeries(series: string): CancelablePromise<{
+    public viewSeries(series: string): CancelablePromise<{
         id?: string;
         name?: string;
         description?: string;
@@ -54,7 +55,7 @@ export class DataService {
             };
         };
     }> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v1/data/{series}",
             path: {
@@ -78,7 +79,7 @@ export class DataService {
      * @returns any We were able to successfully retrieve a result.
      * @throws ApiError
      */
-    public static viewResult(
+    public viewResult(
         series: string,
         result: string
     ): CancelablePromise<{
@@ -98,7 +99,7 @@ export class DataService {
             size?: number;
         };
     }> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v1/data/{series}/{result}",
             path: {

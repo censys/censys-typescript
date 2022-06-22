@@ -1,7 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { OpenAPI } from "../src/core/OpenAPI";
-import { ExperimentalService } from "../src/services/ExperimentalService";
+import { CensysSearch } from "../src";
 
 const IP = "8.8.8.8";
 const START_TIME = "01-01-2022";
@@ -37,9 +37,11 @@ const VIEW_HOST_EVENTS_ERRORS = {
 
 describe("ExperimentalService", () => {
     let mock: MockAdapter;
+    let client: CensysSearch;
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
+        client = new CensysSearch();
     });
 
     afterEach(() => {
@@ -48,7 +50,7 @@ describe("ExperimentalService", () => {
 
     it("should return host events for the specified IP address", async () => {
         // Actual call
-        const experimentalPromise = ExperimentalService.viewHostEvents(
+        const experimentalPromise = client.experimental.viewHostEvents(
             IP,
             START_TIME,
             END_TIME,
@@ -83,7 +85,7 @@ describe("ExperimentalService", () => {
         [422, VIEW_HOST_EVENTS_ERRORS[422]],
     ])("viewHostEvents should throw errors", async (status, errorMessage) => {
         // Actual call
-        const experimentalPromise = ExperimentalService.viewHostEvents(
+        const experimentalPromise = client.experimental.viewHostEvents(
             IP,
             START_TIME,
             END_TIME,
