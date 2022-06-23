@@ -5,8 +5,8 @@ import type { ApiResponse } from "../models/ApiResponse";
 import type { CertComment } from "../models/CertComment";
 import type { Tag } from "../models/Tag";
 
-import type { CancelablePromise } from "../core/CancelablePromise";
 import type { BaseHttpRequest } from "../core/BaseHttpRequest";
+import type { CancelablePromise } from "../core/CancelablePromise";
 
 export class CertsService {
     constructor(public readonly httpRequest: BaseHttpRequest) {}

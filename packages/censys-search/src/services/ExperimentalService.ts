@@ -4,8 +4,8 @@
 import type { ApiResponse } from "../models/ApiResponse";
 import type { HostEvent } from "../models/HostEvent";
 
-import type { CancelablePromise } from "../core/CancelablePromise";
 import type { BaseHttpRequest } from "../core/BaseHttpRequest";
+import type { CancelablePromise } from "../core/CancelablePromise";
 
 export class ExperimentalService {
     constructor(public readonly httpRequest: BaseHttpRequest) {}

@@ -5,12 +5,15 @@
   "private": true,
   "scripts": {
     "postinstall": "husky install",
-    "build:search": "openapi -i search-openapi.yml -o packages/censys-search/src -c axios --name CensysSearch",
     "format": "prettier --write 'packages/**/*.ts'",
     "lint": "eslint .",
+    "generate:search": "openapi -i search-openapi.yml -o packages/censys-search/src -c axios --name CensysSearch",
     "test:search": "yarn workspace @censys/search run test"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.2",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-typescript": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",
     "eslint": "^8.17.0",
@@ -20,6 +23,11 @@
     "openapi-typescript-codegen": "^0.23.0",
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "^2.3.4",
+    "rollup": "^2.70.1",
+    "rollup-plugin-dts": "^4.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-terser": "^7.0.2",
+    "ts-node": "^10.8.1",
     "typescript": "^4.7.3"
   },
   "workspaces": [

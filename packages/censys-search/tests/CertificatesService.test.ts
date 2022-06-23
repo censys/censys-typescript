@@ -1,7 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { OpenAPI } from "../src/core/OpenAPI";
 import { CensysSearch } from "../src";
+import { OpenAPI } from "../src/core/OpenAPI";
 
 const FINGERPRINT =
     "125d206a9931a1f1a71e4c9a4ce66f2d3a99a64c00d040e7983a211e932ad2f7";

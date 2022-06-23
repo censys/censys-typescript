@@ -4,6 +4,8 @@ module.exports = {
     parserOptions: {
         tsconfigRootDir: __dirname,
         project: ["./tsconfig.json"],
+        ecmaVersion: "latest", // Allows the use of modern ECMAScript features
+        sourceType: "module", // Allows for the use of imports
     },
     plugins: ["@typescript-eslint", "jest"],
     extends: [
@@ -14,7 +16,6 @@ module.exports = {
         "prettier",
     ],
     env: {
-        browser: true,
         node: true,
         jest: true,
     },
