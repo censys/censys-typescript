@@ -4,10 +4,11 @@
 import type { Certificate } from "../models/Certificate";
 
 import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { BaseHttpRequest } from "../core/BaseHttpRequest";
 
 export class CertificatesService {
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
+
     /**
      * Returns structured certificate data for the specified SHA-256 fingerprint
      * > The Censys legacy v1 API contains API endpoints which are being maintained until replacement v2 endpoints are available.
@@ -17,10 +18,8 @@ export class CertificatesService {
      * @returns Certificate The record was successfully retrieved.
      * @throws ApiError
      */
-    public static viewCertificate(
-        sha256: string
-    ): CancelablePromise<Certificate> {
-        return __request(OpenAPI, {
+    public viewCertificate(sha256: string): CancelablePromise<Certificate> {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v1/view/certificates/{sha256}",
             path: {
@@ -43,7 +42,7 @@ export class CertificatesService {
      * @returns any The search or query executed successfully.
      * @throws ApiError
      */
-    public static searchCertificates(requestBody: {
+    public searchCertificates(requestBody: {
         query?: string;
         page?: number;
         fields?: Array<string>;
@@ -58,7 +57,7 @@ export class CertificatesService {
         };
         results?: Array<Certificate>;
     }> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "POST",
             url: "/v1/search/certificates",
             body: requestBody,
@@ -81,7 +80,7 @@ export class CertificatesService {
      * @returns any The report was successfully generated.
      * @throws ApiError
      */
-    public static generateCertificateReport(requestBody: {
+    public generateCertificateReport(requestBody: {
         query?: string;
         field?: string;
         buckets?: number;
@@ -101,7 +100,7 @@ export class CertificatesService {
             error_bound?: number;
         };
     }> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "POST",
             url: "/v1/report/certificates",
             body: requestBody,
@@ -125,10 +124,10 @@ export class CertificatesService {
      * @returns string The records were successfully retrieved.
      * @throws ApiError
      */
-    public static bulkCertificateLookup(requestBody: {
+    public bulkCertificateLookup(requestBody: {
         fingerprints?: Array<string>;
     }): CancelablePromise<Record<string, string>> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "POST",
             url: "/v1/bulk/certificates",
             body: requestBody,

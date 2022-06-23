@@ -1,7 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { OpenAPI } from "../src/core/OpenAPI";
-import { CertificatesService } from "../src/services/CertificatesService";
+import { CensysSearch } from "../src";
 
 const FINGERPRINT =
     "125d206a9931a1f1a71e4c9a4ce66f2d3a99a64c00d040e7983a211e932ad2f7";
@@ -98,9 +98,11 @@ const BULK_ERRORS = {
 
 describe("CertificatesService", () => {
     let mock: MockAdapter;
+    let client: CensysSearch;
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
+        client = new CensysSearch();
     });
 
     afterEach(() => {
@@ -110,7 +112,7 @@ describe("CertificatesService", () => {
     it("should return structured certificate data for the specified SHA-256 fingerprint", async () => {
         // Actual call
         const certificatePromise =
-            CertificatesService.viewCertificate(FINGERPRINT);
+            client.certificates.viewCertificate(FINGERPRINT);
 
         // Mock
         mock.onGet(VIEW_PATH + FINGERPRINT, undefined, HEADERS).reply(
@@ -129,7 +131,7 @@ describe("CertificatesService", () => {
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            CertificatesService.viewCertificate(FINGERPRINT);
+            client.certificates.viewCertificate(FINGERPRINT);
 
         // Mock
         mock.onGet(VIEW_PATH + FINGERPRINT, undefined, HEADERS).reply(status);
@@ -141,7 +143,7 @@ describe("CertificatesService", () => {
     it("should return a list of certificates", async () => {
         // Actual call
         const certificatesPromise =
-            CertificatesService.searchCertificates(SEARCH_REQUEST);
+            client.certificates.searchCertificates(SEARCH_REQUEST);
 
         // Mock
         mock.onPost(SEARCH_PATH, SEARCH_REQUEST, {
@@ -163,7 +165,7 @@ describe("CertificatesService", () => {
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            CertificatesService.searchCertificates(SEARCH_REQUEST);
+            client.certificates.searchCertificates(SEARCH_REQUEST);
 
         // Mock
         mock.onPost(SEARCH_PATH, SEARCH_REQUEST, {
@@ -178,7 +180,7 @@ describe("CertificatesService", () => {
     it("should generate certificate report", async () => {
         // Actual call
         const certificatePromise =
-            CertificatesService.generateCertificateReport(REPORT_REQUEST);
+            client.certificates.generateCertificateReport(REPORT_REQUEST);
 
         // Mock
         mock.onPost(REPORT_PATH, REPORT_REQUEST, {
@@ -199,7 +201,7 @@ describe("CertificatesService", () => {
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            CertificatesService.generateCertificateReport(REPORT_REQUEST);
+            client.certificates.generateCertificateReport(REPORT_REQUEST);
 
         // Mock
         mock.onPost(REPORT_PATH, REPORT_REQUEST, {
@@ -214,7 +216,7 @@ describe("CertificatesService", () => {
     it("should return bulk structured certificate data for the specified SHA-256 fingerprints", async () => {
         // Actual call
         const certificatePromise =
-            CertificatesService.bulkCertificateLookup(BULK_REQUEST);
+            client.certificates.bulkCertificateLookup(BULK_REQUEST);
 
         // Mock
         mock.onPost(BULK_PATH, BULK_REQUEST, {
@@ -231,7 +233,7 @@ describe("CertificatesService", () => {
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            CertificatesService.bulkCertificateLookup(BULK_REQUEST);
+            client.certificates.bulkCertificateLookup(BULK_REQUEST);
 
         // Mock
         mock.onPost(BULK_PATH, BULK_REQUEST, {

@@ -6,10 +6,11 @@ import type { CertComment } from "../models/CertComment";
 import type { Tag } from "../models/Tag";
 
 import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { BaseHttpRequest } from "../core/BaseHttpRequest";
 
 export class CertsService {
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
+
     /**
      * Returns a list of hosts presenting the given certificate.
      * Returns a list of hosts which contain services presenting this certificate,
@@ -39,7 +40,7 @@ export class CertsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getHostsByCert(
+    public getHostsByCert(
         fingerprint: string,
         cursor?: string
     ): CancelablePromise<
@@ -70,7 +71,7 @@ export class CertsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/certificates/{fingerprint}/hosts",
             path: {
@@ -90,7 +91,7 @@ export class CertsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getCommentsByCert(fingerprint: string): CancelablePromise<
+    public getCommentsByCert(fingerprint: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 fingerprint?: string;
@@ -98,7 +99,7 @@ export class CertsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/certificates/{fingerprint}/comments",
             path: {
@@ -116,7 +117,7 @@ export class CertsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static addCommentByCert(
+    public addCommentByCert(
         fingerprint: string,
         requestBody: {
             contents?: string;
@@ -126,7 +127,7 @@ export class CertsService {
             result?: CertComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "POST",
             url: "/v2/certificates/{fingerprint}/comments",
             path: {
@@ -146,7 +147,7 @@ export class CertsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getCommentByCert(
+    public getCommentByCert(
         fingerprint: string,
         commentId: string
     ): CancelablePromise<
@@ -154,7 +155,7 @@ export class CertsService {
             result?: CertComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/certificates/{fingerprint}/comments/{comment_id}",
             path: {
@@ -174,7 +175,7 @@ export class CertsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static updateCommentByCert(
+    public updateCommentByCert(
         fingerprint: string,
         commentId: string,
         requestBody: {
@@ -185,7 +186,7 @@ export class CertsService {
             result?: CertComment;
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "PUT",
             url: "/v2/certificates/{fingerprint}/comments/{comment_id}",
             path: {
@@ -209,7 +210,7 @@ export class CertsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static deleteCommentByCert(
+    public deleteCommentByCert(
         fingerprint: string,
         commentId: string
     ): CancelablePromise<
@@ -220,7 +221,7 @@ export class CertsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "DELETE",
             url: "/v2/certificates/{fingerprint}/comments/{comment_id}",
             path: {
@@ -240,7 +241,7 @@ export class CertsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static listCertificatesForTag(id: string): CancelablePromise<
+    public listCertificatesForTag(id: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 certs?: Array<{
@@ -250,7 +251,7 @@ export class CertsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/tags/{id}/certificates",
             path: {
@@ -267,7 +268,7 @@ export class CertsService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getTagsByCert(fingerprint: string): CancelablePromise<
+    public getTagsByCert(fingerprint: string): CancelablePromise<
         ApiResponse & {
             result?: {
                 fingerprint?: string;
@@ -275,7 +276,7 @@ export class CertsService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/certificates/{fingerprint}/tags",
             path: {
@@ -293,11 +294,8 @@ export class CertsService {
      * @returns void
      * @throws ApiError
      */
-    public static tagCert(
-        fingerprint: string,
-        id: string
-    ): CancelablePromise<void> {
-        return __request(OpenAPI, {
+    public tagCert(fingerprint: string, id: string): CancelablePromise<void> {
+        return this.httpRequest.request({
             method: "PUT",
             url: "/v2/certificates/{fingerprint}/tags/{id}",
             path: {
@@ -316,11 +314,8 @@ export class CertsService {
      * @returns void
      * @throws ApiError
      */
-    public static untagCert(
-        fingerprint: string,
-        id: string
-    ): CancelablePromise<void> {
-        return __request(OpenAPI, {
+    public untagCert(fingerprint: string, id: string): CancelablePromise<void> {
+        return this.httpRequest.request({
             method: "DELETE",
             url: "/v2/certificates/{fingerprint}/tags/{id}",
             path: {

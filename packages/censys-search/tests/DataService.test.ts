@@ -1,8 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { OpenAPI } from "../src/core/OpenAPI";
-import { DataService } from "../src/services/DataService";
-
+import { CensysSearch } from "../src";
 const BASE_PATH = OpenAPI.BASE + "/v1/data";
 const HEADERS = {
     Accept: "application/json",
@@ -70,9 +69,11 @@ const VIEW_RESULT_RES = {
 
 describe("DataService", () => {
     let mock: MockAdapter;
+    let client: CensysSearch;
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
+        client = new CensysSearch();
     });
 
     afterEach(() => {
@@ -81,7 +82,7 @@ describe("DataService", () => {
 
     it("should return data on the types of scans (series) we perform", async () => {
         // Actual call
-        const dataPromise = DataService.getSeries();
+        const dataPromise = client.data.getSeries();
 
         // Mock
         mock.onGet(BASE_PATH, undefined, HEADERS).reply(200, GET_SERIES_RES);
@@ -95,7 +96,7 @@ describe("DataService", () => {
         [500, GET_SERIES_ERRORS[500]],
     ])("getSeries should throw errors", async (status, errorMessage) => {
         // Actual call
-        const dataPromise = DataService.getSeries();
+        const dataPromise = client.data.getSeries();
 
         // Mock
         mock.onGet(BASE_PATH, undefined, HEADERS).reply(status);
@@ -106,7 +107,7 @@ describe("DataService", () => {
 
     it("should return data about a specified scan (series)", async () => {
         // Actual call
-        const dataPromise = DataService.viewSeries("test_series");
+        const dataPromise = client.data.viewSeries("test_series");
 
         // Mock
         mock.onGet(BASE_PATH + "/test_series", undefined, HEADERS).reply(
@@ -124,7 +125,7 @@ describe("DataService", () => {
         [500, VIEW_SERIES_ERRORS[500]],
     ])("viewSeries should throw errors", async (status, errorMessage) => {
         // Actual call
-        const dataPromise = DataService.viewSeries("test_series");
+        const dataPromise = client.data.viewSeries("test_series");
 
         // Mock
         mock.onGet(BASE_PATH + "/test_series", undefined, HEADERS).reply(
@@ -137,7 +138,7 @@ describe("DataService", () => {
 
     it("should return data on a particular scan", async () => {
         // Actual call
-        const dataPromise = DataService.viewResult(
+        const dataPromise = client.data.viewResult(
             "test_series",
             "test_result"
         );
@@ -159,7 +160,7 @@ describe("DataService", () => {
         [500, VIEW_RESULT_ERRORS[500]],
     ])("viewResult should throw errors", async (status, errorMessage) => {
         // Actual call
-        const dataPromise = DataService.viewResult(
+        const dataPromise = client.data.viewResult(
             "test_series",
             "test_result"
         );

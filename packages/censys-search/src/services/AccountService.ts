@@ -2,10 +2,11 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { BaseHttpRequest } from "../core/BaseHttpRequest";
 
 export class AccountService {
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
+
     /**
      * Returns information about your account
      * > The Censys legacy v1 API contains API endpoints which are being maintained until replacement v2 endpoints are available.
@@ -14,7 +15,7 @@ export class AccountService {
      * @returns any Account information was successfully retrieved.
      * @throws ApiError
      */
-    public static account(): CancelablePromise<{
+    public account(): CancelablePromise<{
         login?: string;
         email?: string;
         first_login?: string;
@@ -25,7 +26,7 @@ export class AccountService {
             allowance?: number;
         };
     }> {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v1/account",
             errors: {

@@ -5,10 +5,11 @@ import type { ApiResponse } from "../models/ApiResponse";
 import type { HostEvent } from "../models/HostEvent";
 
 import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { BaseHttpRequest } from "../core/BaseHttpRequest";
 
 export class ExperimentalService {
+    constructor(public readonly httpRequest: BaseHttpRequest) {}
+
     /**
      * Returns host events for the specified IP address
      * Fetches a list of events for the host with the specified IP address.
@@ -53,7 +54,7 @@ export class ExperimentalService {
      * @returns any Events for the host were sucessfully retrieved.
      * @throws ApiError
      */
-    public static viewHostEvents(
+    public viewHostEvents(
         ip: string,
         startTime?: string,
         endTime?: string,
@@ -68,7 +69,7 @@ export class ExperimentalService {
             };
         }
     > {
-        return __request(OpenAPI, {
+        return this.httpRequest.request({
             method: "GET",
             url: "/v2/experimental/hosts/{ip}/events",
             path: {
