@@ -1,8 +1,8 @@
-// import { CensysSearch } from "../";
+import { CensysSearch } from "../";
 
-// const client = new CensysSearch({
-//     USERNAME: process.env.CENSYS_API_ID,
-//     PASSWORD: process.env.CENSYS_API_SECRET,
-// });
+const client = new CensysSearch({
+    USERNAME: process.env.CENSYS_API_ID,
+    PASSWORD: process.env.CENSYS_API_SECRET,
+});
 
-// client.account.account().then(console.log).catch(console.error);
+client.account.account().then(console.log).catch(console.error);

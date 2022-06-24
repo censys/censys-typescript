@@ -11,6 +11,7 @@
     "test:search": "yarn workspace @censys/search run test"
   },
   "devDependencies": {
+    "@rollup/plugin-alias": "^3.1.9",
     "@rollup/plugin-commonjs": "^21.0.2",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-typescript": "^8.3.1",
