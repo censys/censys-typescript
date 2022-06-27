@@ -1,4 +1,4 @@
-import type { ApiResponse, HostHit, VirtualHostHit, HostComment } from "../src";
+import type { ApiResponse, HostComment, HostHit, VirtualHostHit } from "../src";
 import { CensysSearch } from "../src";
 
 const client = new CensysSearch({
