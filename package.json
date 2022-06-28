@@ -11,12 +11,9 @@
     "test:search": "yarn workspace @censys/search run test"
   },
   "devDependencies": {
-    "@rollup/plugin-alias": "^3.1.9",
-    "@rollup/plugin-commonjs": "^21.0.2",
-    "@rollup/plugin-node-resolve": "^13.3.0",
-    "@rollup/plugin-typescript": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",
+    "esbuild": "^0.14.47",
     "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^26.5.3",
@@ -24,14 +21,11 @@
     "openapi-typescript-codegen": "^0.23.0",
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "^2.3.4",
-    "rollup": "^2.70.1",
-    "rollup-plugin-dts": "^4.2.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-terser": "^7.0.2",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.3"
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {}
 }
