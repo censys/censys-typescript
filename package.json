@@ -5,21 +5,25 @@
   "private": true,
   "scripts": {
     "postinstall": "husky install",
-    "build:search": "openapi -i search-openapi.yml -o packages/censys-search/src -c axios --name CensysSearch",
     "format": "prettier --write 'packages/**/*.ts'",
     "lint": "eslint .",
+    "generate:search": "openapi -i search-openapi.yml -o packages/censys-search/src -c axios --name CensysSearch",
     "test:search": "yarn workspace @censys/search run test"
   },
+  "dependencies": {},
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",
+    "esbuild": "^0.14.47",
     "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^26.5.3",
     "husky": "^8.0.1",
+    "npm-dts": "^1.3.12",
     "openapi-typescript-codegen": "^0.23.0",
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "^2.3.4",
+    "ts-node": "^10.8.1",
     "typescript": "^4.7.3"
   },
   "workspaces": [
