@@ -1,7 +1,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { OpenAPI } from "../src/core/OpenAPI";
 import { CensysSearch } from "../src";
+import { OpenAPI } from "../src/core/OpenAPI";
 
 const API_RESPONSE = {
     code: 200,

@@ -9,8 +9,8 @@ import type { HostHit } from "../models/HostHit";
 import type { Tag } from "../models/Tag";
 import type { VirtualHostHit } from "../models/VirtualHostHit";
 
-import type { CancelablePromise } from "../core/CancelablePromise";
 import type { BaseHttpRequest } from "../core/BaseHttpRequest";
+import type { CancelablePromise } from "../core/CancelablePromise";
 
 export class HostsService {
     constructor(public readonly httpRequest: BaseHttpRequest) {}
