@@ -142,7 +142,7 @@ export class AssetsService {
      * @returns any
      * @throws ApiError
      */
-    public getV1AssetsHosts1(ipAddress: string): CancelablePromise<{
+    public getV1AssetsHost(ipAddress: string): CancelablePromise<{
         associatedAt: string | null;
         source: string | null;
         risks: Array<{
@@ -331,7 +331,7 @@ export class AssetsService {
      * @returns any
      * @throws ApiError
      */
-    public getV1AssetsHostsComments1(
+    public getV1AssetsHostComment(
         ipAddress: string,
         commentId: number
     ): CancelablePromise<{
@@ -507,7 +507,7 @@ export class AssetsService {
      * @returns any
      * @throws ApiError
      */
-    public getV1AssetsCertificates1(sha256: string): CancelablePromise<{
+    public getV1AssetsCertificate(sha256: string): CancelablePromise<{
         risks: Array<{
             type: "CERT_RISK";
             name: string;
@@ -621,7 +621,7 @@ export class AssetsService {
      * @returns any
      * @throws ApiError
      */
-    public getV1AssetsCertificatesComments(
+    public getV1AssetsCertificateComments(
         sha256: string,
         pageNumber?: number,
         pageSize?: number
@@ -680,7 +680,7 @@ export class AssetsService {
      * @returns any
      * @throws ApiError
      */
-    public getV1AssetsCertificatesComments1(
+    public getV1AssetsCertificateComment(
         sha256: string,
         commentId: number
     ): CancelablePromise<{
@@ -849,7 +849,7 @@ export class AssetsService {
      * @returns any
      * @throws ApiError
      */
-    public getV1AssetsDomains1(domain: string): CancelablePromise<{
+    public getV1AssetsDomain(domain: string): CancelablePromise<{
         source: string | null;
         data: {
             domain: string;
@@ -1005,7 +1005,7 @@ export class AssetsService {
      * @returns any
      * @throws ApiError
      */
-    public getV1AssetsDomainsComments1(
+    public getV1AssetsDomainComment(
         domain: string,
         commentId: number
     ): CancelablePromise<{
@@ -1144,7 +1144,7 @@ export class AssetsService {
      * @returns any
      * @throws ApiError
      */
-    public getV1AssetsDomainsSubdomains1(
+    public getV1AssetsDomainSubdomain(
         domain: string,
         subdomain: string
     ): CancelablePromise<
@@ -1281,7 +1281,7 @@ export class AssetsService {
      * @returns any
      * @throws ApiError
      */
-    public getV1AssetsDomainsSubdomainsComments(
+    public getV1AssetsDomainsSubdomainComments(
         domain: string,
         subdomain: string,
         pageNumber?: number,
@@ -1322,7 +1322,7 @@ export class AssetsService {
      * @returns any
      * @throws ApiError
      */
-    public getV1AssetsDomainsSubdomainsComments1(
+    public getV1AssetsDomainsSubdomainsComments(
         domain: string,
         subdomain: string,
         commentId: number

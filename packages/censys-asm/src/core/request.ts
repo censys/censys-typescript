@@ -155,6 +155,7 @@ const getHeaders = async (
     options: ApiRequestOptions,
     formData?: FormData
 ): Promise<Record<string, string>> => {
+    const apiKey = await resolve(options, config.API_KEY);
     const token = await resolve(options, config.TOKEN);
     const username = await resolve(options, config.USERNAME);
     const password = await resolve(options, config.PASSWORD);
@@ -166,6 +167,7 @@ const getHeaders = async (
 
     const headers = Object.entries({
         Accept: "application/json",
+        "Censys-Api-Key": apiKey,
         ...additionalHeaders,
         ...options.headers,
         ...formHeaders,

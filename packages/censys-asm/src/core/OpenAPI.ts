@@ -11,6 +11,7 @@ export type OpenAPIConfig = {
     VERSION: string;
     WITH_CREDENTIALS: boolean;
     CREDENTIALS: "include" | "omit" | "same-origin";
+    API_KEY?: string | Resolver<string>;
     TOKEN?: string | Resolver<string>;
     USERNAME?: string | Resolver<string>;
     PASSWORD?: string | Resolver<string>;
@@ -19,10 +20,11 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-    BASE: "/api",
+    BASE: "https://app.censys.io/api",
     VERSION: "1",
     WITH_CREDENTIALS: false,
     CREDENTIALS: "include",
+    API_KEY: undefined,
     TOKEN: undefined,
     USERNAME: undefined,
     PASSWORD: undefined,

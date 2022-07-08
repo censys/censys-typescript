@@ -1,8 +1,8 @@
 import { CensysSearch } from "../src";
 
 const client = new CensysSearch({
-    USERNAME: process.env.CENSYS_API_ID,
-    PASSWORD: process.env.CENSYS_API_SECRET,
+    API_ID: process.env.CENSYS_API_ID,
+    API_SECRET: process.env.CENSYS_API_SECRET,
 });
 
 // View host events for a given IP address, including optional RFC3339 timestamp

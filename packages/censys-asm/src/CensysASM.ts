@@ -29,10 +29,11 @@ export class CensysASM {
         HttpRequest: HttpRequestConstructor = AxiosHttpRequest
     ) {
         this.request = new HttpRequest({
-            BASE: config?.BASE ?? "/api",
+            BASE: config?.BASE ?? "https://app.censys.io/api",
             VERSION: config?.VERSION ?? "1",
             WITH_CREDENTIALS: config?.WITH_CREDENTIALS ?? false,
             CREDENTIALS: config?.CREDENTIALS ?? "include",
+            API_KEY: config?.API_KEY,
             TOKEN: config?.TOKEN,
             USERNAME: config?.USERNAME,
             PASSWORD: config?.PASSWORD,

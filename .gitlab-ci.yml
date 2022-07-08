@@ -26,6 +26,12 @@ build @censys/search:
   script:
     - yarn workspace @censys/search run build
 
+build @censys/asm:
+  extends: .yarn
+  stage: build
+  script:
+    - yarn workspace @censys/asm run build
+
 test @censys/search:
   extends: .yarn
   stage: test
@@ -37,3 +43,15 @@ test @censys/search:
       - packages/censys-search/junit.xml
     reports:
       junit: packages/censys-search/junit.xml
+
+test @censys/asm:
+  extends: .yarn
+  stage: test
+  script:
+    - yarn run test:asm --ci
+  artifacts:
+    when: always
+    paths:
+      - packages/censys-asm/junit.xml
+    reports:
+      junit: packages/censys-asm/junit.xml
