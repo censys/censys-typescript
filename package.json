@@ -7,8 +7,11 @@
     "postinstall": "husky install",
     "format": "prettier --write 'packages/**/*.ts'",
     "lint": "eslint .",
-    "generate:search": "openapi -i search-openapi.yml -o packages/censys-search/src -c axios --name CensysSearch",
-    "test:search": "yarn workspace @censys/search run test"
+    "generate:search": "cd packages/censys-search/ && openapi -i openapi.yml -o src -c axios --name CensysSearch",
+    "generate:asm": "cd packages/censys-asm/ && openapi -i openapi.yml -o src -c axios --name CensysASM",
+    "test:search": "yarn workspace @censys/search run test",
+    "test:asm": "yarn workspace @censys/asm run test",
+    "test": "yarn test:search && yarn test:asm"
   },
   "dependencies": {},
   "devDependencies": {
