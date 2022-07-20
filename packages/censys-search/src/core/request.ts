@@ -156,8 +156,12 @@ const getHeaders = async (
     formData?: FormData
 ): Promise<Record<string, string>> => {
     const token = await resolve(options, config.TOKEN);
-    const username = await resolve(options, config.USERNAME);
-    const password = await resolve(options, config.PASSWORD);
+    const username =
+        (await resolve(options, config.USERNAME)) ||
+        (await resolve(options, config.API_ID));
+    const password =
+        (await resolve(options, config.PASSWORD)) ||
+        (await resolve(options, config.API_SECRET));
     const additionalHeaders = await resolve(options, config.HEADERS);
     const formHeaders =
         (typeof formData?.getHeaders === "function" &&
