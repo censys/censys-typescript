@@ -16,7 +16,11 @@ const CERTIFICATE_SHA256 =
 const TEST_COMMENT = {
     markdown: "This is a test comment",
 };
-const TEST_TAG = "test";
+const TEST_TAG = {
+    name: "test_tag",
+};
+
+const TEST_TAG_NAME = "test_tag";
 
 describe("AssetsService", () => {
     let mock: MockAdapter;
@@ -179,8 +183,193 @@ describe("AssetsService", () => {
     );
 
     // TODO: Write tests for V1 delete asset comment
+    it.each([
+        [
+            "hosts",
+            IP_ADDRESS,
+            () => client.assets.deleteV1AssetsHostsComments(IP_ADDRESS, 1),
+            {},
+        ],
+        [
+            "domains",
+            DOMAIN,
+            () => client.assets.deleteV1AssetsDomainsComments(DOMAIN, 1),
+            {},
+        ],
+        [
+            "certificates",
+            CERTIFICATE_SHA256,
+            () =>
+                client.assets.deleteV1AssetsCertificatesComments(
+                    CERTIFICATE_SHA256,
+                    1
+                ),
+            {},
+        ],
+    ])(
+        "should delete V1 Assets %s comments",
+        async (assetType, assetId, method, response) => {
+            // Actual call
+            const assetsPromise = method();
+
+            // Mock
+            mock.onDelete(
+                BASE_URL +
+                    "/v1/assets/" +
+                    assetType +
+                    "/" +
+                    assetId +
+                    "/comments/1",
+                undefined,
+                HEADERS
+            ).reply(200, response);
+
+            // Assertions
+            await expect(assetsPromise).resolves.toEqual(response);
+        }
+    );
 
     // TODO: Write tests for V1 post asset tag
+    it.each([
+        [
+            "hosts",
+            IP_ADDRESS,
+            () => client.assets.postV1AssetsHostsTags(IP_ADDRESS, TEST_TAG),
+            {},
+        ],
+        [
+            "domains",
+            DOMAIN,
+            () => client.assets.postV1AssetsDomainsTags(DOMAIN, TEST_TAG),
+            {},
+        ],
+        [
+            "certificates",
+            CERTIFICATE_SHA256,
+            () =>
+                client.assets.postV1AssetsCertificatesTags(
+                    CERTIFICATE_SHA256,
+                    TEST_TAG
+                ),
+            {},
+        ],
+    ])(
+        "should post V1 Assets %s tags",
+        async (assetType, assetId, method, response) => {
+            // Actual call
+            const assetsPromise = method();
+
+            // Mock
+            mock.onPost(
+                BASE_URL + "/v1/assets/" + assetType + "/" + assetId + "/tags",
+                TEST_TAG,
+                { ...HEADERS, "Content-Type": "application/json" }
+            ).reply(200, response);
+
+            // Assertions
+            await expect(assetsPromise).resolves.toEqual(response);
+        }
+    );
 
     // TODO: Write tests for V1 delete asset tag
+    it.each([
+        [
+            "hosts",
+            IP_ADDRESS,
+            () =>
+                client.assets.deleteV1AssetsHostsTags(
+                    IP_ADDRESS,
+                    TEST_TAG_NAME
+                ),
+            {},
+        ],
+        [
+            "domains",
+            DOMAIN,
+            () =>
+                client.assets.deleteV1AssetsDomainsTags(DOMAIN, TEST_TAG_NAME),
+            {},
+        ],
+        [
+            "certificates",
+            CERTIFICATE_SHA256,
+            () =>
+                client.assets.deleteV1AssetsCertificatesTags(
+                    CERTIFICATE_SHA256,
+                    TEST_TAG_NAME
+                ),
+            {},
+        ],
+    ])(
+        "should delete V1 Assets %s tags",
+        async (assetType, assetId, method, response) => {
+            // Actual call
+            const assetsPromise = method();
+
+            // Mock
+            mock.onDelete(
+                BASE_URL +
+                    "/v1/assets/" +
+                    assetType +
+                    "/" +
+                    assetId +
+                    "/tags/" +
+                    TEST_TAG_NAME,
+                undefined,
+                HEADERS
+            ).reply(200, response);
+
+            // Assertions
+            await expect(assetsPromise).resolves.toEqual(response);
+        }
+    );
+
+    // TODO: Write tests for v1 get asset comment
+    it.each([
+        [
+            "hosts",
+            IP_ADDRESS,
+            () => client.assets.getV1AssetsHostComment(IP_ADDRESS, 1),
+            {},
+        ],
+        [
+            "domains",
+            DOMAIN,
+            () => client.assets.getV1AssetsDomainComment(DOMAIN, 1),
+            {},
+        ],
+        [
+            "certificates",
+            CERTIFICATE_SHA256,
+            () =>
+                client.assets.getV1AssetsCertificateComment(
+                    CERTIFICATE_SHA256,
+                    1
+                ),
+            {},
+        ],
+    ])(
+        "should get V1 Assets %s comment",
+        async (assetType, assetId, method, response) => {
+            // Actual call
+            const assetsPromise = method();
+
+            // Mock
+            mock.onGet(
+                BASE_URL +
+                    "/v1/assets/" +
+                    assetType +
+                    "/" +
+                    assetId +
+                    "/comments/1",
+                undefined,
+                HEADERS
+            ).reply(200, response);
+
+            // Assertions
+            await expect(assetsPromise).resolves.toEqual(response);
+        }
+    );
+
+    //TODO: Write tests for v1 get asset domains
 });
