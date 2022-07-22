@@ -4,6 +4,7 @@ import { CensysASM, OpenAPI } from "../src";
 
 const BASE_URL = OpenAPI.BASE;
 const API_KEY = "123456789";
+//TODO: Increase test coverage
 
 describe("LogbookService", () => {
     let mock: MockAdapter;
