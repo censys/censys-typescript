@@ -32,6 +32,18 @@ build @censys/asm:
   script:
     - yarn workspace @censys/asm run build
 
+lint:
+  extends: .yarn
+  stage: test
+  script:
+    - yarn run lint:ci
+  artifacts:
+    when: always
+    paths:
+      - eslint.xml
+    reports:
+      junit: eslint.xml
+
 test @censys/search:
   extends: .yarn
   stage: test
