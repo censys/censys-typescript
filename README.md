@@ -1,4 +1,4 @@
-# Censys Typescript Library 
+# Censys Typescript Library
 
 An easy-to-use and lightweight Typescript wrapper for Censys APIs.
 
@@ -18,9 +18,9 @@ All contributions (no matter how small) are always welcome.
 
 ## Development
 
-```bash
-$ git clone git@github.com:censys/censys-typescript.git
-$ yarn install
+```sh
+git clone https://github.com/censys/censys-typescript.git
+yarn install
 ```
 
 ## License
@@ -28,4 +28,3 @@ $ yarn install
 This software is licensed under [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 - Copyright (C) 2022 Censys, Inc.
-

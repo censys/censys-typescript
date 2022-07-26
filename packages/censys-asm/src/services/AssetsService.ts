@@ -1322,7 +1322,7 @@ export class AssetsService {
      * @returns any
      * @throws ApiError
      */
-    public getV1AssetsDomainsSubdomainsComments(
+    public getV1AssetsDomainSubdomainComment(
         domain: string,
         subdomain: string,
         commentId: number

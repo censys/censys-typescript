@@ -4511,16 +4511,9 @@
                             }
                           },
                           "config": {
-                            "anyOf": [
-                              {
-                                "type": "object",
-                                "properties": {},
-                                "additionalProperties": true
-                              },
-                              {
-                                "nullable": true
-                              }
-                            ]
+                            "type": "object",
+                            "properties": {},
+                            "additionalProperties": true
                           }
                         },
                         "additionalProperties": false,
@@ -4854,16 +4847,9 @@
                           }
                         },
                         "config": {
-                          "anyOf": [
-                            {
-                              "type": "object",
-                              "properties": {},
-                              "additionalProperties": true
-                            },
-                            {
-                              "nullable": true
-                            }
-                          ]
+                          "type": "object",
+                          "properties": {},
+                          "additionalProperties": true
                         }
                       },
                       "additionalProperties": false,
@@ -8545,6 +8531,7 @@
     },
     "/v1/assets/hosts/{ipAddress}": {
       "get": {
+        "operationId": "getV1AssetsHost",
         "tags": [
           "assets"
         ],
@@ -9735,6 +9722,7 @@
         }
       },
       "get": {
+        "operationId": "getV1AssetsHostComment",
         "tags": [
           "assets"
         ],
@@ -10644,6 +10632,7 @@
     },
     "/v1/assets/certificates/{sha256}": {
       "get": {
+        "operationId": "getV1AssetsCertificate",
         "tags": [
           "assets"
         ],
@@ -11177,6 +11166,7 @@
         }
       },
       "get": {
+        "operationId": "getV1AssetsCertificateComments",
         "tags": [
           "assets"
         ],
@@ -11471,6 +11461,7 @@
         }
       },
       "get": {
+        "operationId": "getV1AssetsCertificateComment",
         "tags": [
           "assets"
         ],
@@ -12283,7 +12274,7 @@
     },
     "/v1/assets/domains/{domain}": {
       "get": {
-        "operationId": "getAsse"
+        "operationId": "getV1AssetsDomain",
         "tags": [
           "assets"
         ],
@@ -13022,6 +13013,7 @@
         }
       },
       "get": {
+        "operationId": "getV1AssetsDomainComment",
         "tags": [
           "assets"
         ],
@@ -13706,6 +13698,7 @@
     },
     "/v1/assets/domains/{domain}/subdomains/{subdomain}": {
       "get": {
+        "operationId": "getV1AssetsDomainSubdomain",
         "tags": [
           "assets"
         ],
@@ -14286,6 +14279,7 @@
         }
       },
       "get": {
+        "operationId": "getV1AssetsDomainsSubdomainComments",
         "tags": [
           "assets"
         ],
@@ -14488,6 +14482,7 @@
     },
     "/v1/assets/domains/{domain}/subdomains/{subdomain}/comments/{commentId}": {
       "get": {
+        "operationId": "getV1AssetsDomainSubdomainComment",
         "tags": [
           "assets"
         ],
@@ -16287,7 +16282,7 @@
   },
   "servers": [
     {
-      "url": "/api"
+      "url": "https://app.censys.io/api"
     }
   ],
   "components": {
