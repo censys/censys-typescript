@@ -12,9 +12,22 @@ client.seeds
     .postV1Seeds({
         seeds: [
             {
-                label: "Seed 1",
+                label: "seed-label",
                 type: "IP_ADDRESS",
                 value: "3.3.3.3",
+            },
+        ],
+    })
+    .then(console.log)
+    .catch(console.error);
+
+// Update seeds by label.
+client.seeds
+    .putV1Seeds("seed-label", {
+        seeds: [
+            {
+                type: "IP_ADDRESS",
+                value: "1.1.1.1",
             },
         ],
     })

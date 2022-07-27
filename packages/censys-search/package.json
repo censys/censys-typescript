@@ -1,7 +1,15 @@
 {
   "name": "@censys/search",
-  "version": "1.0.0",
+  "description": "An easy-to-use and lightweight Typescript wrapper for Censys Search APIs.",
+  "version": "1.0.2",
   "license": "Apache-2.0",
+  "keywords": [
+    "censys",
+    "search",
+    "api"
+  ],
+  "homepage": "https://github.com/censys/censys-typescript/packages/censys-search/",
+  "repository": "github:censys/censys-typescript.git",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.esm.js",

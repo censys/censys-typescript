@@ -12,9 +12,11 @@
     "generate:asm": "cd packages/censys-asm/ && openapi -i openapi.json -o src -c axios --name CensysASM && cd ../.. && yarn run format",
     "test:search": "yarn workspace @censys/search run test",
     "test:asm": "yarn workspace @censys/asm run test",
-    "test": "yarn test:search && yarn test:asm"
+    "test": "yarn test:search && yarn test:asm",
+    "publish:search": "yarn workspace @censys/search publish --non-interactive --access public",
+    "publish:asm": "yarn workspace @censys/asm publish --non-interactive --access public",
+    "publish": "yarn publish:search && yarn publish:asm"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/node": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
@@ -34,5 +36,6 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "packageManager": "yarn@3.2.2"
 }
