@@ -87,25 +87,32 @@ aggregateHosts("services.service_name", "ELASTICSEARCH", 50, "EXCLUDE")
         console.log(err);
     });
 
-const IP = "8.8.8.8";
+// Fetch a specific host and its services
+client.hosts.viewHost("8.8.8.8").then(console.log).catch(console.error);
 
-//Fetch a specific host and its services
-client.hosts.viewHost(IP).then(console.log).catch(console.error);
-
-//Returns a diff of a host against different points in time or against a different host altogether.
-client.hosts.viewHostDiff(IP, "1.1.1.1").then(console.log).catch(console.error);
-
-// Returns host events for the specified IP address, optionally pass in a RFC3339 timestamp to fetch a host at the given point in time.
+// Returns a diff of a host against different points in time or against a different host altogether.
 client.hosts
-    .viewHostEvents(IP, "2021-03-01T17:49:05Z")
+    .viewHostDiff("8.8.8.8", "1.1.1.1")
     .then(console.log)
     .catch(console.error);
 
-//  Returns host names for the specified IP address
-client.hosts.viewHostNames(IP, 100).then(console.log).catch(console.error);
+// Returns host events for the specified IP address, optionally pass in a RFC3339 timestamp to fetch a host at the given point in time.
+client.hosts
+    .viewHostEvents("8.8.8.8", "2021-03-01T17:49:05Z")
+    .then(console.log)
+    .catch(console.error);
+
+// Returns host names for the specified IP address
+client.hosts
+    .viewHostNames("8.8.8.8", 100)
+    .then(console.log)
+    .catch(console.error);
 
 // Returns a list of comments on the given host
-client.hosts.getCommentsByHost(IP).then(console.log).catch(console.error);
+client.hosts
+    .getCommentsByHost("8.8.8.8")
+    .then(console.log)
+    .catch(console.error);
 
 const getCommentId = async (ip: string): Promise<string> => {
     const response: ApiResponse & {
@@ -120,7 +127,7 @@ const getCommentId = async (ip: string): Promise<string> => {
     return "";
 };
 
-getCommentId(IP)
+getCommentId("8.8.8.8")
     .then((id) => {
         console.log(id);
     })
@@ -128,36 +135,41 @@ getCommentId(IP)
 
 // Adds a comment on the given host
 client.hosts
-    .addCommentByHost(IP, { contents: "This is a test comment" })
+    .addCommentByHost("8.8.8.8", { contents: "This is a test comment" })
     .then(console.log)
     .catch(console.error);
 
-//Returns a specific comment on the given host.
-client.hosts.getCommentByHost(IP, "69").then(console.log).catch(console.error);
-
-//Updates a specific comment on the given host.
+// Returns a specific comment on the given host.
 client.hosts
-    .updateCommentByHost(IP, "943", { contents: "This is an updated comment" })
+    .getCommentByHost("8.8.8.8", "69")
     .then(console.log)
     .catch(console.error);
 
-//Deletes a specific comment on the given host.
+// Updates a specific comment on the given host.
 client.hosts
-    .deleteCommentByHost(IP, "943")
+    .updateCommentByHost("8.8.8.8", "943", {
+        contents: "This is an updated comment",
+    })
     .then(console.log)
     .catch(console.error);
 
-//Returns host metadata about what Censys scans for
+// Deletes a specific comment on the given host.
+client.hosts
+    .deleteCommentByHost("8.8.8.8", "943")
+    .then(console.log)
+    .catch(console.error);
+
+// Returns host metadata about what Censys scans for
 client.hosts.getHostMetadata().then(console.log).catch(console.error);
 
-//Returns a list of hosts for a tag
+// Returns a list of hosts for a tag
 client.hosts.listHostsForTag("69").then(console.log).catch(console.error);
 
-//Returns a list of tags on the given host.
-client.hosts.getTagsByHost(IP).then(console.log).catch(console.error);
+// Returns a list of tags on the given host.
+client.hosts.getTagsByHost("8.8.8.8").then(console.log).catch(console.error);
 
-//Adds a tag on the given host.
-client.hosts.tagHost(IP, "943").then(console.log).catch(console.error);
+// Adds a tag on the given host.
+client.hosts.tagHost("8.8.8.8", "943").then(console.log).catch(console.error);
 
-//Removes a tag on the given host.
-client.hosts.untagHost(IP, "943").then(console.log).catch(console.error);
+// Removes a tag on the given host.
+client.hosts.untagHost("8.8.8.8", "943").then(console.log).catch(console.error);

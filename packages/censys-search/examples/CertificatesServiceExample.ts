@@ -22,7 +22,7 @@ client.certificates
     .then(console.log)
     .catch(console.error);
 
-//View specific certificate report
+// View specific certificate report
 const reportRequest = {
     query: "github.com and tags: trusted",
     field: "parsed.validity.start",
@@ -32,14 +32,13 @@ client.certificates
     .then(console.log)
     .catch(console.error);
 
-//Bulk certificate lookup example
+// Bulk certificate lookup example
 const bulkRequest = {
     fingerprints: [
         "125d206a9931a1f1a71e4c9a4ce66f2d3a99a64c00d040e7983a211e932ad2f7",
         "629ee76e44b336f06bfac826be9aae234b661f64a03c1988fe90b89fcb498bf8",
     ],
 };
-
 client.certificates
     .bulkCertificateLookup(bulkRequest)
     .then(console.log)

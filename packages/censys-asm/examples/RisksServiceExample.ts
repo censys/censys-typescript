@@ -7,7 +7,7 @@ const client = new CensysASM({
 // Return a full list of all risks that affect any assets in the system.
 client.risks.getV1Risks().then(console.log).catch(console.error);
 
-// Return a full list of all Arvixe risks that affect any assets in the system.
+// Return a full list of all risks from in the Arvixe cloud.
 client.risks
     .getV1Risks(undefined, undefined, "Arvixe")
     .then(console.log)
