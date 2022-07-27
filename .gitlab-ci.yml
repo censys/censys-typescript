@@ -3,6 +3,9 @@ image: node:latest
 before_script:
   - apt-get update -qq && apt-get install
 
+variables:
+  NPM_TOKEN: undefined
+
 stages:
   - build
   - test
