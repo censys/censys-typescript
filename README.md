@@ -1,5 +1,9 @@
 # Censys Typescript Library
 
+[![GitHub Discussions](https://img.shields.io/badge/GitHub-Discussions-brightgreen?logo=github)](https://github.com/censys/censys-typescript/discussions)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-organge.svg?logo=git&logoColor=organge)](http://makeapullrequest.com)
+[![License](https://img.shields.io/github/license/censys/censys-typescript?logo=apache)](https://github.com/censys/censys-typescript/blob/main/LICENSE)
+
 An easy-to-use and lightweight Typescript wrapper for Censys APIs.
 
 ## Overview
@@ -10,17 +14,28 @@ API keys are required and can be retrieved from your [Censys account](https://se
 
 ## Resources
 
+- [Source](https://github.com/censys/censys-typescript)
+- [Issue Tracker](https://github.com/censys/censys-typescript/issues)
+- [Changelog](https://github.com/censys/censys-typescript/releases)
+- [Discussions](https://github.com/censys/censys-typescript/discussions)
 - [Censys Homepage](https://censys.io/)
+- [Censys Search](https://search.censys.io/)
 
 ## Contributing
 
-All contributions (no matter how small) are always welcome.
+All contributions (no matter how small) are always welcome. See [Contributing to Censys Typescript](https://github.com/censys/censys-typescript/blob/main/.github/CONTRIBUTING.md) for more information.
 
 ## Development
 
 ```sh
-git clone https://github.com/censys/censys-typescript.git
+git clone git@github.com:censys/censys-typescript.git
 yarn install
+```
+
+## Testing
+
+```sh
+yarn test
 ```
 
 ## License
