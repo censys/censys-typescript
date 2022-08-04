@@ -1,31 +1,24 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { CensysSearch } from "../src";
-import { OpenAPI } from "../src/core/OpenAPI";
+import {
+    BASE_URL_V1,
+    CERTIFICATE_SHA256,
+    CLIENT_CONFIG,
+    HEADERS,
+    POST_HEADERS,
+} from "./utils";
 
-const FINGERPRINT =
-    "125d206a9931a1f1a71e4c9a4ce66f2d3a99a64c00d040e7983a211e932ad2f7";
-const VIEW_PATH = OpenAPI.BASE + "/v1/view/certificates/";
-const SEARCH_PATH = OpenAPI.BASE + "/v1/search/certificates";
-const REPORT_PATH = OpenAPI.BASE + "/v1/report/certificates";
-const BULK_PATH = OpenAPI.BASE + "/v1/bulk/certificates";
-const HEADERS = {
-    Accept: "application/json",
-};
-const SEARCH_REQUEST = {
-    query: "test",
-    page: 1,
-    fields: [],
-    flatten: true,
-};
-const BULK_REQUEST = {
-    fingerprints: [FINGERPRINT],
-};
+const VIEW_PATH = BASE_URL_V1 + "/view/certificates/";
+const SEARCH_PATH = BASE_URL_V1 + "/search/certificates";
+const REPORT_PATH = BASE_URL_V1 + "/report/certificates";
+const BULK_PATH = BASE_URL_V1 + "/bulk/certificates";
+
 const VIEW_CERTIFICATE_RES = {
     raw: "test",
     parsed: {
         fingerprint_sha1: "test",
-        fingerprint_sha256: FINGERPRINT,
+        fingerprint_sha256: CERTIFICATE_SHA256,
         fingerprint_md5: "test",
         serial_number: "test",
         subject_key_info: undefined,
@@ -42,39 +35,48 @@ const VIEW_CERTIFICATE_RES = {
     },
     ct: undefined,
 };
+const BULK_VIEW_REQ = {
+    fingerprints: [CERTIFICATE_SHA256],
+};
+const BULK_CERTIFICATE_RES = {
+    key: "value",
+};
+const CERTIFICATE_QUERY = "parsed.fingerprint_sha256: " + CERTIFICATE_SHA256;
+const SEARCH_REQ = {
+    query: CERTIFICATE_QUERY,
+    page: 1,
+    fields: [],
+    flatten: true,
+};
 const SEARCH_CERTIFICATE_RES = {
     status: "ok",
     metadata: {
         count: 1,
-        query: SEARCH_REQUEST.query,
-        page: SEARCH_REQUEST.page,
+        query: SEARCH_REQ.query,
+        page: SEARCH_REQ.page,
         pages: 1,
     },
     results: [VIEW_CERTIFICATE_RES],
 };
-
-const REPORT_REQUEST = {
-    query: "test",
+const CERT_REPORT_REQ = {
+    query: CERTIFICATE_QUERY,
     field: "test",
     buckets: 1,
 };
-
-const GENERATE_CERTIFICATE_RES = {
+const CERT_REPORT_RES = {
     status: "test",
     results: ["test", 1],
     metadata: {
-        query: REPORT_REQUEST.query,
+        query: CERT_REPORT_REQ.query,
         count: 1,
-        buckets: REPORT_REQUEST.buckets,
+        buckets: CERT_REPORT_REQ.buckets,
         backend_time: 1,
         nonnull_count: 1,
         other_result_count: 1,
         error_bound: 1,
     },
 };
-const BULK_CERTIFICATE_RES = {
-    key: "value",
-};
+
 const VIEW_ERRORS = {
     404: `The requested record does not exist.`,
     429: `Your query was not executed because you have exceeded your specified rate limit.`,
@@ -86,12 +88,12 @@ const SEARCH_ERRORS = {
     429: `Your query was not executed because you have exceeded your specified rate limit.`,
     500: `An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.`,
 };
-const GENERATE_ERRORS = {
+const REPORT_ERRORS = {
     400: `Your query could not be executed (e.g., query could not be parsed or timed out.)`,
     429: `Your query was not executed because you have exceeded your specified rate limit.`,
     500: `An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.`,
 };
-const BULK_ERRORS = {
+const BULK_VIEW_ERRORS = {
     429: `Your query was not executed because you have exceeded your specified rate limit.`,
     500: `An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.`,
 };
@@ -102,7 +104,7 @@ describe("CertificatesService", () => {
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
-        client = new CensysSearch();
+        client = new CensysSearch(CLIENT_CONFIG);
     });
 
     afterEach(() => {
@@ -112,10 +114,10 @@ describe("CertificatesService", () => {
     it("should return structured certificate data for the specified SHA-256 fingerprint", async () => {
         // Actual call
         const certificatePromise =
-            client.certificates.viewCertificate(FINGERPRINT);
+            client.certificates.viewCertificate(CERTIFICATE_SHA256);
 
         // Mock
-        mock.onGet(VIEW_PATH + FINGERPRINT, undefined, HEADERS).reply(
+        mock.onGet(VIEW_PATH + CERTIFICATE_SHA256, undefined, HEADERS).reply(
             200,
             VIEW_CERTIFICATE_RES
         );
@@ -131,10 +133,12 @@ describe("CertificatesService", () => {
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            client.certificates.viewCertificate(FINGERPRINT);
+            client.certificates.viewCertificate(CERTIFICATE_SHA256);
 
         // Mock
-        mock.onGet(VIEW_PATH + FINGERPRINT, undefined, HEADERS).reply(status);
+        mock.onGet(VIEW_PATH + CERTIFICATE_SHA256, undefined, HEADERS).reply(
+            status
+        );
 
         // Assertions
         await expect(certificatePromise).rejects.toThrowError(errorMessage);
@@ -143,13 +147,13 @@ describe("CertificatesService", () => {
     it("should return a list of certificates", async () => {
         // Actual call
         const certificatesPromise =
-            client.certificates.searchCertificates(SEARCH_REQUEST);
+            client.certificates.searchCertificates(SEARCH_REQ);
 
         // Mock
-        mock.onPost(SEARCH_PATH, SEARCH_REQUEST, {
-            ...HEADERS,
-            "Content-Type": "application/json",
-        }).reply(200, SEARCH_CERTIFICATE_RES);
+        mock.onPost(SEARCH_PATH, SEARCH_REQ, POST_HEADERS).reply(
+            200,
+            SEARCH_CERTIFICATE_RES
+        );
 
         // Assertions
         await expect(certificatesPromise).resolves.toEqual(
@@ -165,13 +169,10 @@ describe("CertificatesService", () => {
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            client.certificates.searchCertificates(SEARCH_REQUEST);
+            client.certificates.searchCertificates(SEARCH_REQ);
 
         // Mock
-        mock.onPost(SEARCH_PATH, SEARCH_REQUEST, {
-            ...HEADERS,
-            "Content-Type": "application/json",
-        }).reply(status);
+        mock.onPost(SEARCH_PATH, SEARCH_REQ, POST_HEADERS).reply(status);
 
         // Assertions
         await expect(certificatePromise).rejects.toThrowError(errorMessage);
@@ -180,34 +181,29 @@ describe("CertificatesService", () => {
     it("should generate certificate report", async () => {
         // Actual call
         const certificatePromise =
-            client.certificates.generateCertificateReport(REPORT_REQUEST);
+            client.certificates.generateCertificateReport(CERT_REPORT_REQ);
 
         // Mock
-        mock.onPost(REPORT_PATH, REPORT_REQUEST, {
-            ...HEADERS,
-            "Content-Type": "application/json",
-        }).reply(200, GENERATE_CERTIFICATE_RES);
+        mock.onPost(REPORT_PATH, CERT_REPORT_REQ, POST_HEADERS).reply(
+            200,
+            CERT_REPORT_RES
+        );
 
         // Assertions
-        await expect(certificatePromise).resolves.toEqual(
-            GENERATE_CERTIFICATE_RES
-        );
+        await expect(certificatePromise).resolves.toEqual(CERT_REPORT_RES);
     });
 
     it.each([
-        [400, GENERATE_ERRORS[400]],
-        [429, GENERATE_ERRORS[429]],
-        [500, GENERATE_ERRORS[500]],
+        [400, REPORT_ERRORS[400]],
+        [429, REPORT_ERRORS[429]],
+        [500, REPORT_ERRORS[500]],
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            client.certificates.generateCertificateReport(REPORT_REQUEST);
+            client.certificates.generateCertificateReport(CERT_REPORT_REQ);
 
         // Mock
-        mock.onPost(REPORT_PATH, REPORT_REQUEST, {
-            ...HEADERS,
-            "Content-Type": "application/json",
-        }).reply(status);
+        mock.onPost(REPORT_PATH, CERT_REPORT_REQ, POST_HEADERS).reply(status);
 
         // Assertions
         await expect(certificatePromise).rejects.toThrowError(errorMessage);
@@ -216,30 +212,27 @@ describe("CertificatesService", () => {
     it("should return bulk structured certificate data for the specified SHA-256 fingerprints", async () => {
         // Actual call
         const certificatePromise =
-            client.certificates.bulkCertificateLookup(BULK_REQUEST);
+            client.certificates.bulkCertificateLookup(BULK_VIEW_REQ);
 
         // Mock
-        mock.onPost(BULK_PATH, BULK_REQUEST, {
-            ...HEADERS,
-            "Content-Type": "application/json",
-        }).reply(200, BULK_CERTIFICATE_RES);
+        mock.onPost(BULK_PATH, BULK_VIEW_REQ, POST_HEADERS).reply(
+            200,
+            BULK_CERTIFICATE_RES
+        );
 
         // Assertions
         await expect(certificatePromise).resolves.toEqual(BULK_CERTIFICATE_RES);
     });
     it.each([
-        [429, BULK_ERRORS[429]],
-        [500, BULK_ERRORS[500]],
+        [429, BULK_VIEW_ERRORS[429]],
+        [500, BULK_VIEW_ERRORS[500]],
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            client.certificates.bulkCertificateLookup(BULK_REQUEST);
+            client.certificates.bulkCertificateLookup(BULK_VIEW_REQ);
 
         // Mock
-        mock.onPost(BULK_PATH, BULK_REQUEST, {
-            ...HEADERS,
-            "Content-Type": "application/json",
-        }).reply(status);
+        mock.onPost(BULK_PATH, BULK_VIEW_REQ, POST_HEADERS).reply(status);
 
         // Assertions
         await expect(certificatePromise).rejects.toThrowError(errorMessage);

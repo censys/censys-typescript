@@ -1,34 +1,14 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { CensysSearch } from "../src";
-import { OpenAPI } from "../src/core/OpenAPI";
-const BASE_PATH = OpenAPI.BASE + "/v1/data";
-const HEADERS = {
-    Accept: "application/json",
-};
+import { BASE_URL_V1, CLIENT_CONFIG, HEADERS } from "./utils";
+
+const BASE_PATH = BASE_URL_V1 + "/data";
 
 const GET_SERIES_RES = {
     primary_series: { key: "value" },
     raw_series: { key: "value" },
 };
-
-const GET_SERIES_ERRORS = {
-    429: `Your query was not executed because you have exceeded your specified rate limit.`,
-    500: `An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.`,
-};
-
-const VIEW_SERIES_ERRORS = {
-    404: `The requested series does not exist.`,
-    429: `Your query was not executed because you have exceeded your specified rate limit.`,
-    500: `An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.`,
-};
-
-const VIEW_RESULT_ERRORS = {
-    404: `The requested series or result does not exist.`,
-    429: `Your query was not executed because you have exceeded your specified rate limit.`,
-    500: `An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.`,
-};
-
 const VIEW_SERIES_RES = {
     id: "test_id",
     name: "test_name",
@@ -48,7 +28,6 @@ const VIEW_SERIES_RES = {
         },
     },
 };
-
 const VIEW_RESULT_RES = {
     id: "test_id",
     timestamp: "01-01-2022",
@@ -67,13 +46,28 @@ const VIEW_RESULT_RES = {
     },
 };
 
+const GET_SERIES_ERRORS = {
+    429: `Your query was not executed because you have exceeded your specified rate limit.`,
+    500: `An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.`,
+};
+const VIEW_SERIES_ERRORS = {
+    404: `The requested series does not exist.`,
+    429: `Your query was not executed because you have exceeded your specified rate limit.`,
+    500: `An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.`,
+};
+const VIEW_RESULT_ERRORS = {
+    404: `The requested series or result does not exist.`,
+    429: `Your query was not executed because you have exceeded your specified rate limit.`,
+    500: `An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.`,
+};
+
 describe("DataService", () => {
     let mock: MockAdapter;
     let client: CensysSearch;
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
-        client = new CensysSearch();
+        client = new CensysSearch(CLIENT_CONFIG);
     });
 
     afterEach(() => {

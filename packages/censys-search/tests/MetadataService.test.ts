@@ -1,18 +1,13 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { CensysSearch } from "../src";
-import { OpenAPI } from "../src/core/OpenAPI";
-
-const HEADERS = {
-    Accept: "application/json",
-};
+import { BASE_URL_V2, CLIENT_CONFIG, HEADERS } from "./utils";
 
 const API_RESPONSE = {
     code: 200,
     status: "ok",
     result: "test",
 };
-
 const GET_HOST_METADATA_RES = {
     ...API_RESPONSE,
     result: {
@@ -26,7 +21,7 @@ describe("MetadataService", () => {
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
-        client = new CensysSearch();
+        client = new CensysSearch(CLIENT_CONFIG);
     });
 
     afterEach(() => {
@@ -37,11 +32,10 @@ describe("MetadataService", () => {
         // Actual call
         const metadataPromise = client.metadata.getHostMetadata();
         // Mock
-        mock.onGet(
-            OpenAPI.BASE + "/v2/metadata/hosts",
-            undefined,
-            HEADERS
-        ).reply(200, GET_HOST_METADATA_RES);
+        mock.onGet(BASE_URL_V2 + "/metadata/hosts", undefined, HEADERS).reply(
+            200,
+            GET_HOST_METADATA_RES
+        );
 
         // Assertions
         await expect(metadataPromise).resolves.toEqual(GET_HOST_METADATA_RES);

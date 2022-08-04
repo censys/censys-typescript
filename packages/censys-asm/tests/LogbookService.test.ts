@@ -1,10 +1,9 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { CensysASM, OpenAPI } from "../src";
+import { CensysASM } from "../src";
+import { API_KEY, BASE_URL_V1, POST_HEADERS } from "./utils";
 
-const BASE_URL = OpenAPI.BASE;
-const API_KEY = "123456789";
-//TODO: Increase test coverage
+// TODO: Increase test coverage
 
 describe("LogbookService", () => {
     let mock: MockAdapter;
@@ -29,7 +28,11 @@ describe("LogbookService", () => {
         const logbookPromise = client.logbook.postV1LogbookCursor(requestBody);
 
         // Mock
-        mock.onPost(`${BASE_URL}/v1/logbook-cursor`).reply(200, {
+        mock.onPost(
+            BASE_URL_V1 + "/logbook-cursor",
+            undefined,
+            POST_HEADERS
+        ).reply(200, {
             cursor: "cursor",
         });
 

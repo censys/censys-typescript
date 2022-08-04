@@ -1,9 +1,8 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { CensysASM, OpenAPI } from "../src";
+import { CensysASM } from "../src";
+import { API_KEY, BASE_URL_V1, HEADERS } from "./utils";
 
-const BASE_URL = OpenAPI.BASE;
-const API_KEY = "123456789";
 //TODO: Increase test coverage
 
 describe("CloudsService", () => {
@@ -40,10 +39,11 @@ describe("CloudsService", () => {
         const cloudsPromise = client.clouds.getV1CloudsHostCounts(since);
 
         // Mock
-        mock.onGet(`${BASE_URL}/v1/clouds/hostCounts/${since}`).reply(
-            200,
-            response
-        );
+        mock.onGet(
+            BASE_URL_V1 + `/clouds/hostCounts/${since}`,
+            undefined,
+            HEADERS
+        ).reply(200, response);
 
         // Assertions
         await expect(cloudsPromise).resolves.toEqual(response);

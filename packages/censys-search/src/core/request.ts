@@ -12,6 +12,8 @@ import type { OnCancel } from "./CancelablePromise";
 import { CancelablePromise } from "./CancelablePromise";
 import type { OpenAPIConfig } from "./OpenAPI";
 
+const { name, version } = require("../../package.json");
+
 const isDefined = <T>(
     value: T | null | undefined
 ): value is Exclude<T, null | undefined> => {
@@ -170,6 +172,7 @@ const getHeaders = async (
 
     const headers = Object.entries({
         Accept: "application/json",
+        "User-Agent": `censys-typescript/${version} (${name})`,
         ...additionalHeaders,
         ...options.headers,
         ...formHeaders,

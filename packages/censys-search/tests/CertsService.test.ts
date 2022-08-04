@@ -1,22 +1,22 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { CensysSearch } from "../src";
-import { OpenAPI } from "../src/core/OpenAPI";
-/*
- * Docs: https://www.npmjs.com/package/axios-mock-adapter
- */
+import {
+    BASE_URL_V2,
+    CERTIFICATE_SHA256,
+    CLIENT_CONFIG,
+    DOMAIN_NAME,
+    HEADERS,
+    IP_ADDRESS,
+    POST_HEADERS,
+} from "./utils";
 
-const FINGERPRINT =
-    "125d206a9931a1f1a71e4c9a4ce66f2d3a99a64c00d040e7983a211e932ad2f7";
-const CERTS_PATH = OpenAPI.BASE + "/v2/certificates/";
+const CERTS_PATH = BASE_URL_V2 + "/certificates/";
 
 const API_RESPONSE = {
     code: 200,
     status: "ok",
     result: "test",
-};
-const HEADERS = {
-    Accept: "application/json",
 };
 const CERTS_REQUEST = {
     contents: "test",
@@ -24,14 +24,11 @@ const CERTS_REQUEST = {
 const GET_HOSTS_BY_CERT_RES = {
     ...API_RESPONSE,
     result: {
-        /**
-         * The SHA-256 fingerprint of the certificate.
-         */
-        fingerprint: FINGERPRINT,
+        fingerprint: CERTIFICATE_SHA256,
         hosts: [
             {
-                ip: "1.1.1.1",
-                name: "test_name",
+                ip: IP_ADDRESS,
+                name: DOMAIN_NAME,
                 observed_at: "01-01-2022",
                 first_observed_at: "01-01-2022",
             },
@@ -44,11 +41,11 @@ const GET_HOSTS_BY_CERT_RES = {
 const GET_COMMENTS_BY_CERT_RES = {
     ...API_RESPONSE,
     result: {
-        fingerprint: FINGERPRINT,
+        fingerprint: CERTIFICATE_SHA256,
         comments: [
             {
                 id: "string",
-                fingerprint: FINGERPRINT,
+                fingerprint: CERTIFICATE_SHA256,
                 author_id: "test_id",
                 contents: "test_contents",
                 created_at: "01-01-2022",
@@ -60,7 +57,7 @@ const ADD_COMMENT_RES = {
     ...API_RESPONSE,
     result: {
         id: "string",
-        fingerprint: FINGERPRINT,
+        fingerprint: CERTIFICATE_SHA256,
         author_id: "test_id",
         contents: "test_contents",
         created_at: "01-01-2022",
@@ -70,7 +67,7 @@ const GET_COMMENT_BY_CERT_RES = {
     ...API_RESPONSE,
     result: {
         id: "string",
-        fingerprint: FINGERPRINT,
+        fingerprint: CERTIFICATE_SHA256,
         author_id: "test_id",
         contents: "test_contents",
         created_at: "01-01-2022",
@@ -79,12 +76,11 @@ const GET_COMMENT_BY_CERT_RES = {
 const UPDATE_COMMENT_REQUEST = {
     contents: "test",
 };
-
 const UPDATE_COMMENT_RES = {
     ...API_RESPONSE,
     result: {
         id: "string",
-        fingerprint: FINGERPRINT,
+        fingerprint: CERTIFICATE_SHA256,
         author_id: "test_id",
         contents: "test_contents",
         created_at: "01-01-2022",
@@ -93,11 +89,11 @@ const UPDATE_COMMENT_RES = {
 const DELETE_COMMENT_RES = {
     ...API_RESPONSE,
     result: {
-        fingerprint: FINGERPRINT,
+        fingerprint: CERTIFICATE_SHA256,
         comments: [
             {
                 id: "string",
-                fingerprint: FINGERPRINT,
+                fingerprint: CERTIFICATE_SHA256,
                 author_id: "test_id",
                 contents: "test_contents",
                 created_at: "01-01-2022",
@@ -105,13 +101,12 @@ const DELETE_COMMENT_RES = {
         ],
     },
 };
-
 const LIST_CERTIFICATES_RES = {
     ...API_RESPONSE,
     result: {
         certs: [
             {
-                fingerprint: FINGERPRINT,
+                fingerprint: CERTIFICATE_SHA256,
                 tagged_at: "01-01-2022",
             },
         ],
@@ -120,7 +115,7 @@ const LIST_CERTIFICATES_RES = {
 const GET_TAGS_BY_CERT_RES = {
     ...API_RESPONSE,
     result: {
-        fingerprint: FINGERPRINT,
+        fingerprint: CERTIFICATE_SHA256,
         tags: [
             {
                 id: "test_id",
@@ -141,7 +136,7 @@ describe("CertsService", () => {
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
-        client = new CensysSearch();
+        client = new CensysSearch(CLIENT_CONFIG);
     });
 
     afterEach(() => {
@@ -153,11 +148,14 @@ describe("CertsService", () => {
         const cursor = "test_cursor";
 
         // Actual call
-        const certsPromise = client.certs.getHostsByCert(FINGERPRINT, cursor);
+        const certsPromise = client.certs.getHostsByCert(
+            CERTIFICATE_SHA256,
+            cursor
+        );
 
         // Mock
         mock.onGet(
-            CERTS_PATH + FINGERPRINT + `/hosts?cursor=${cursor}`,
+            CERTS_PATH + CERTIFICATE_SHA256 + `/hosts?cursor=${cursor}`,
             undefined,
             HEADERS
         ).reply(200, GET_HOSTS_BY_CERT_RES);
@@ -168,11 +166,11 @@ describe("CertsService", () => {
 
     it("Returns a list of comments on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.getCommentsByCert(FINGERPRINT);
+        const certsPromise = client.certs.getCommentsByCert(CERTIFICATE_SHA256);
 
         // Mock
         mock.onGet(
-            CERTS_PATH + FINGERPRINT + "/comments",
+            CERTS_PATH + CERTIFICATE_SHA256 + "/comments",
             undefined,
             HEADERS
         ).reply(200, GET_COMMENTS_BY_CERT_RES);
@@ -184,15 +182,16 @@ describe("CertsService", () => {
     it("should add a comment on the given certificate.", async () => {
         // Actual call
         const certsPromise = client.certs.addCommentByCert(
-            FINGERPRINT,
+            CERTIFICATE_SHA256,
             CERTS_REQUEST
         );
 
         // Mock
-        mock.onPost(CERTS_PATH + FINGERPRINT + "/comments", CERTS_REQUEST, {
-            ...HEADERS,
-            "Content-Type": "application/json",
-        }).reply(200, ADD_COMMENT_RES);
+        mock.onPost(
+            CERTS_PATH + CERTIFICATE_SHA256 + "/comments",
+            CERTS_REQUEST,
+            POST_HEADERS
+        ).reply(200, ADD_COMMENT_RES);
 
         // Assertions
         await expect(certsPromise).resolves.toEqual(ADD_COMMENT_RES);
@@ -201,13 +200,13 @@ describe("CertsService", () => {
     it("should return a comment on the given certificate.", async () => {
         // Actual call
         const certsPromise = client.certs.getCommentByCert(
-            FINGERPRINT,
+            CERTIFICATE_SHA256,
             "test_id"
         );
 
         // Mock
         mock.onGet(
-            CERTS_PATH + FINGERPRINT + "/comments/test_id",
+            CERTS_PATH + CERTIFICATE_SHA256 + "/comments/test_id",
             undefined,
             HEADERS
         ).reply(200, GET_COMMENT_BY_CERT_RES);
@@ -219,16 +218,16 @@ describe("CertsService", () => {
     it("should update a comment on the given certificate.", async () => {
         // Actual call
         const certsPromise = client.certs.updateCommentByCert(
-            FINGERPRINT,
+            CERTIFICATE_SHA256,
             "test_id",
             UPDATE_COMMENT_REQUEST
         );
 
         // Mock
         mock.onPut(
-            CERTS_PATH + FINGERPRINT + "/comments/test_id",
+            CERTS_PATH + CERTIFICATE_SHA256 + "/comments/test_id",
             UPDATE_COMMENT_REQUEST,
-            { ...HEADERS, "Content-Type": "application/json" }
+            POST_HEADERS
         ).reply(200, UPDATE_COMMENT_RES);
 
         // Assertions
@@ -238,16 +237,16 @@ describe("CertsService", () => {
     it("should throw an error", async () => {
         // Actual call
         const certsPromise = client.certs.updateCommentByCert(
-            FINGERPRINT,
+            CERTIFICATE_SHA256,
             "test_id",
             UPDATE_COMMENT_REQUEST
         );
 
         // Mock
         mock.onPut(
-            CERTS_PATH + FINGERPRINT + "/comments/test_id",
+            CERTS_PATH + CERTIFICATE_SHA256 + "/comments/test_id",
             UPDATE_COMMENT_REQUEST,
-            { ...HEADERS, "Content-Type": "application/json" }
+            POST_HEADERS
         ).reply(404, DELETE_COMMENT_RES);
 
         // Assertions
@@ -257,13 +256,13 @@ describe("CertsService", () => {
     it("should delete a comment on the given certificate.", async () => {
         // Actual call
         const certsPromise = client.certs.deleteCommentByCert(
-            FINGERPRINT,
+            CERTIFICATE_SHA256,
             "test_id"
         );
 
         // Mock
         mock.onDelete(
-            CERTS_PATH + FINGERPRINT + "/comments/test_id",
+            CERTS_PATH + CERTIFICATE_SHA256 + "/comments/test_id",
             HEADERS
         ).reply(200, DELETE_COMMENT_RES);
 
@@ -274,13 +273,13 @@ describe("CertsService", () => {
     it("delete comment should throw an error", async () => {
         // Actual call
         const certsPromise = client.certs.deleteCommentByCert(
-            FINGERPRINT,
+            CERTIFICATE_SHA256,
             "test_id"
         );
 
         // Mock
         mock.onDelete(
-            CERTS_PATH + FINGERPRINT + "/comments/test_id",
+            CERTS_PATH + CERTIFICATE_SHA256 + "/comments/test_id",
             HEADERS
         ).reply(404, DELETE_COMMENT_RES);
 
@@ -293,10 +292,10 @@ describe("CertsService", () => {
         const certsPromise = client.certs.listCertificatesForTag("test_tag");
 
         // Mock
-        mock.onGet(
-            OpenAPI.BASE + "/v2/tags/test_tag/certificates",
-            HEADERS
-        ).reply(200, LIST_CERTIFICATES_RES);
+        mock.onGet(BASE_URL_V2 + "/tags/test_tag/certificates", HEADERS).reply(
+            200,
+            LIST_CERTIFICATES_RES
+        );
 
         // Assertions
         await expect(certsPromise).resolves.toEqual(LIST_CERTIFICATES_RES);
@@ -304,10 +303,10 @@ describe("CertsService", () => {
 
     it("should return a list of tags on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.getTagsByCert(FINGERPRINT);
+        const certsPromise = client.certs.getTagsByCert(CERTIFICATE_SHA256);
 
         // Mock
-        mock.onGet(CERTS_PATH + FINGERPRINT + "/tags", HEADERS).reply(
+        mock.onGet(CERTS_PATH + CERTIFICATE_SHA256 + "/tags", HEADERS).reply(
             200,
             GET_TAGS_BY_CERT_RES
         );
@@ -317,10 +316,10 @@ describe("CertsService", () => {
     });
     it("should add a tag on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.tagCert(FINGERPRINT, "tag_id");
+        const certsPromise = client.certs.tagCert(CERTIFICATE_SHA256, "tag_id");
 
         // Mock
-        mock.onPut(CERTS_PATH + FINGERPRINT + "/tags/tag_id").reply(200);
+        mock.onPut(CERTS_PATH + CERTIFICATE_SHA256 + "/tags/tag_id").reply(200);
 
         // Assertions
         await expect(certsPromise).resolves.toEqual(undefined);
@@ -328,10 +327,15 @@ describe("CertsService", () => {
 
     it("should remove a tag on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.untagCert(FINGERPRINT, "tag_id");
+        const certsPromise = client.certs.untagCert(
+            CERTIFICATE_SHA256,
+            "tag_id"
+        );
 
         // Mock
-        mock.onDelete(CERTS_PATH + FINGERPRINT + "/tags/tag_id").reply(200);
+        mock.onDelete(CERTS_PATH + CERTIFICATE_SHA256 + "/tags/tag_id").reply(
+            200
+        );
 
         // Assertions
         await expect(certsPromise).resolves.toEqual(undefined);
