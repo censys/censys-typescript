@@ -1,9 +1,8 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { CensysSearch } from "../src";
-import { OpenAPI } from "../src/core/OpenAPI";
+import { BASE_URL_V2, CLIENT_CONFIG, HEADERS, IP_ADDRESS } from "./utils";
 
-const IP = "8.8.8.8";
 const START_TIME = "01-01-2022";
 const END_TIME = "01-01-2022";
 const PER_PAGE = 25;
@@ -16,16 +15,13 @@ const API_RESPONSE = {
     result: "test",
 };
 
-const HEADERS = {
-    Accept: "application/json",
-};
-
-const PATH = OpenAPI.BASE + "/v2/experimental/hosts/" + IP + "/events";
+const HOST_EVENTS_PATH =
+    BASE_URL_V2 + `/experimental/hosts/${IP_ADDRESS}/events`;
 
 const VIEW_HOST_EVENTS_RES = {
     ...API_RESPONSE,
     result: {
-        ip: IP,
+        ip: IP_ADDRESS,
         events: [{ _event: "test_event", timestamp: "01-01-2022" }],
     },
 };
@@ -41,7 +37,7 @@ describe("ExperimentalService", () => {
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
-        client = new CensysSearch();
+        client = new CensysSearch(CLIENT_CONFIG);
     });
 
     afterEach(() => {
@@ -51,7 +47,7 @@ describe("ExperimentalService", () => {
     it("should return host events for the specified IP address", async () => {
         // Actual call
         const experimentalPromise = client.experimental.viewHostEvents(
-            IP,
+            IP_ADDRESS,
             START_TIME,
             END_TIME,
             PER_PAGE,
@@ -60,7 +56,7 @@ describe("ExperimentalService", () => {
         );
         // Mock
         mock.onGet(
-            PATH +
+            HOST_EVENTS_PATH +
                 "?start_time=" +
                 START_TIME +
                 "&end_time=" +
@@ -74,6 +70,7 @@ describe("ExperimentalService", () => {
             undefined,
             HEADERS
         ).reply(200, VIEW_HOST_EVENTS_RES);
+
         // Assert
         await expect(experimentalPromise).resolves.toEqual(
             VIEW_HOST_EVENTS_RES
@@ -86,7 +83,7 @@ describe("ExperimentalService", () => {
     ])("viewHostEvents should throw errors", async (status, errorMessage) => {
         // Actual call
         const experimentalPromise = client.experimental.viewHostEvents(
-            IP,
+            IP_ADDRESS,
             START_TIME,
             END_TIME,
             PER_PAGE,
@@ -95,7 +92,7 @@ describe("ExperimentalService", () => {
         );
         // Mock
         mock.onGet(
-            PATH +
+            HOST_EVENTS_PATH +
                 "?start_time=" +
                 START_TIME +
                 "&end_time=" +

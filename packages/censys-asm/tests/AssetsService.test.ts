@@ -1,26 +1,26 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { CensysASM, OpenAPI } from "../src";
+import { CensysASM } from "../src";
+import {
+    API_KEY,
+    BASE_URL_V1,
+    CERTIFICATE_SHA256,
+    DOMAIN_NAME,
+    HEADERS,
+    IP_ADDRESS,
+    POST_HEADERS,
+} from "./utils";
 
-const BASE_URL = OpenAPI.BASE;
-const API_KEY = "123456789";
-const HEADERS = {
-    Accept: "application/json",
-    "Censys-Api-Key": API_KEY,
-};
+const ASSETS_BASE_URL = BASE_URL_V1 + "/assets/";
 
-const IP_ADDRESS = "8.8.8.8";
-const DOMAIN = "google.com";
-const CERTIFICATE_SHA256 =
-    "125d206a9931a1f1a71e4c9a4ce66f2d3a99a64c00d040e7983a211e932ad2f7";
+const TEST_COMMENT_MD = "This is a test comment";
 const TEST_COMMENT = {
-    markdown: "This is a test comment",
+    markdown: TEST_COMMENT_MD,
 };
-const TEST_TAG = {
-    name: "test_tag",
-};
-
 const TEST_TAG_NAME = "test_tag";
+const TEST_TAG = {
+    name: TEST_TAG_NAME,
+};
 
 describe("AssetsService", () => {
     let mock: MockAdapter;
@@ -45,11 +45,10 @@ describe("AssetsService", () => {
         const assetsPromise = method();
 
         // Mock
-        mock.onGet(
-            BASE_URL + "/v1/assets/" + assetType,
-            undefined,
-            HEADERS
-        ).reply(200, response);
+        mock.onGet(ASSETS_BASE_URL + assetType, undefined, HEADERS).reply(
+            200,
+            response
+        );
 
         // Assertions
         await expect(assetsPromise).resolves.toEqual(response);
@@ -63,7 +62,12 @@ describe("AssetsService", () => {
             () => client.assets.getV1AssetsHost(IP_ADDRESS),
             {},
         ],
-        ["domains", DOMAIN, () => client.assets.getV1AssetsDomain(DOMAIN), {}],
+        [
+            "domains",
+            DOMAIN_NAME,
+            () => client.assets.getV1AssetsDomain(DOMAIN_NAME),
+            {},
+        ],
         [
             "certificates",
             CERTIFICATE_SHA256,
@@ -78,7 +82,7 @@ describe("AssetsService", () => {
 
             // Mock
             mock.onGet(
-                BASE_URL + "/v1/assets/" + assetType + "/" + assetId,
+                ASSETS_BASE_URL + assetType + "/" + assetId,
                 undefined,
                 HEADERS
             ).reply(200, response);
@@ -97,8 +101,8 @@ describe("AssetsService", () => {
         ],
         [
             "domains",
-            DOMAIN,
-            () => client.assets.getV1AssetsDomainsComments(DOMAIN),
+            DOMAIN_NAME,
+            () => client.assets.getV1AssetsDomainsComments(DOMAIN_NAME),
             {},
         ],
         [
@@ -118,12 +122,7 @@ describe("AssetsService", () => {
 
             // Mock
             mock.onGet(
-                BASE_URL +
-                    "/v1/assets/" +
-                    assetType +
-                    "/" +
-                    assetId +
-                    "/comments"
+                ASSETS_BASE_URL + assetType + "/" + assetId + "/comments"
             ).reply(200, response);
 
             // Assertions
@@ -144,9 +143,12 @@ describe("AssetsService", () => {
         ],
         [
             "domains",
-            DOMAIN,
+            DOMAIN_NAME,
             () =>
-                client.assets.postV1AssetsDomainsComments(DOMAIN, TEST_COMMENT),
+                client.assets.postV1AssetsDomainsComments(
+                    DOMAIN_NAME,
+                    TEST_COMMENT
+                ),
             {},
         ],
         [
@@ -167,14 +169,9 @@ describe("AssetsService", () => {
 
             // Mock
             mock.onPost(
-                BASE_URL +
-                    "/v1/assets/" +
-                    assetType +
-                    "/" +
-                    assetId +
-                    "/comments",
+                ASSETS_BASE_URL + assetType + "/" + assetId + "/comments",
                 TEST_COMMENT,
-                { ...HEADERS, "Content-Type": "application/json" }
+                POST_HEADERS
             ).reply(200, response);
 
             // Assertions
@@ -192,8 +189,8 @@ describe("AssetsService", () => {
         ],
         [
             "domains",
-            DOMAIN,
-            () => client.assets.deleteV1AssetsDomainsComments(DOMAIN, 1),
+            DOMAIN_NAME,
+            () => client.assets.deleteV1AssetsDomainsComments(DOMAIN_NAME, 1),
             {},
         ],
         [
@@ -214,12 +211,7 @@ describe("AssetsService", () => {
 
             // Mock
             mock.onDelete(
-                BASE_URL +
-                    "/v1/assets/" +
-                    assetType +
-                    "/" +
-                    assetId +
-                    "/comments/1",
+                ASSETS_BASE_URL + assetType + "/" + assetId + "/comments/1",
                 undefined,
                 HEADERS
             ).reply(200, response);
@@ -239,8 +231,8 @@ describe("AssetsService", () => {
         ],
         [
             "domains",
-            DOMAIN,
-            () => client.assets.postV1AssetsDomainsTags(DOMAIN, TEST_TAG),
+            DOMAIN_NAME,
+            () => client.assets.postV1AssetsDomainsTags(DOMAIN_NAME, TEST_TAG),
             {},
         ],
         [
@@ -261,9 +253,9 @@ describe("AssetsService", () => {
 
             // Mock
             mock.onPost(
-                BASE_URL + "/v1/assets/" + assetType + "/" + assetId + "/tags",
+                ASSETS_BASE_URL + assetType + "/" + assetId + "/tags",
                 TEST_TAG,
-                { ...HEADERS, "Content-Type": "application/json" }
+                POST_HEADERS
             ).reply(200, response);
 
             // Assertions
@@ -285,9 +277,12 @@ describe("AssetsService", () => {
         ],
         [
             "domains",
-            DOMAIN,
+            DOMAIN_NAME,
             () =>
-                client.assets.deleteV1AssetsDomainsTags(DOMAIN, TEST_TAG_NAME),
+                client.assets.deleteV1AssetsDomainsTags(
+                    DOMAIN_NAME,
+                    TEST_TAG_NAME
+                ),
             {},
         ],
         [
@@ -308,8 +303,7 @@ describe("AssetsService", () => {
 
             // Mock
             mock.onDelete(
-                BASE_URL +
-                    "/v1/assets/" +
+                ASSETS_BASE_URL +
                     assetType +
                     "/" +
                     assetId +
@@ -334,8 +328,8 @@ describe("AssetsService", () => {
         ],
         [
             "domains",
-            DOMAIN,
-            () => client.assets.getV1AssetsDomainComment(DOMAIN, 1),
+            DOMAIN_NAME,
+            () => client.assets.getV1AssetsDomainComment(DOMAIN_NAME, 1),
             {},
         ],
         [
@@ -356,12 +350,7 @@ describe("AssetsService", () => {
 
             // Mock
             mock.onGet(
-                BASE_URL +
-                    "/v1/assets/" +
-                    assetType +
-                    "/" +
-                    assetId +
-                    "/comments/1",
+                ASSETS_BASE_URL + assetType + "/" + assetId + "/comments/1",
                 undefined,
                 HEADERS
             ).reply(200, response);

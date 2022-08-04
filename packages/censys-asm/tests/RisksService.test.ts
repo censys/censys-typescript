@@ -1,14 +1,9 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { CensysASM, OpenAPI } from "../src";
+import { CensysASM } from "../src";
+import { API_KEY, BASE_URL_V1, HEADERS } from "./utils";
 
-const BASE_URL = OpenAPI.BASE;
-const API_KEY = "123456789";
-const HEADERS = {
-    Accept: "application/json",
-    "Censys-Api-Key": API_KEY,
-};
-//TODO: Increase test coverage
+// TODO: Increase test coverage
 
 describe("RisksService", () => {
     let mock: MockAdapter;
@@ -59,7 +54,8 @@ describe("RisksService", () => {
 
         // Mock
         mock.onGet(
-            `${BASE_URL}/v1/risks?pageNumber=${pageNumber}&cloud=${cloud}&includeAcceptedRisks=true`,
+            BASE_URL_V1 +
+                `/risks?pageNumber=${pageNumber}&cloud=${cloud}&includeAcceptedRisks=true`,
             undefined,
             HEADERS
         ).reply(200, response);

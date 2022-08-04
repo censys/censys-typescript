@@ -1,14 +1,9 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
-import { CensysASM, OpenAPI } from "../src";
+import { CensysASM } from "../src";
+import { API_KEY, BASE_URL_V1, IP_ADDRESS, POST_HEADERS } from "./utils";
 
-const BASE_URL = OpenAPI.BASE;
-const API_KEY = "123456789";
-const HEADERS = {
-    Accept: "application/json",
-    "Censys-Api-Key": API_KEY,
-};
-//TODO: Increase test coverage
+// TODO: Increase test coverage
 
 describe("SeedsService", () => {
     let mock: MockAdapter;
@@ -26,32 +21,28 @@ describe("SeedsService", () => {
     it("should put V1 seeds", async () => {
         // Test data
         const label = "label";
-
-        // Actual call
-        const seedsPromise = client.seeds.putV1Seeds(label, {
+        const seed_data: {
+            seeds: Array<{
+                type: "ASN" | "CIDR" | "DOMAIN_NAME" | "IP_ADDRESS";
+                value: string | number;
+            }>;
+        } = {
             seeds: [
                 {
                     type: "IP_ADDRESS",
-                    value: "8.8.8.8",
+                    value: IP_ADDRESS,
                 },
             ],
-        });
+        };
+
+        // Actual call
+        const seedsPromise = client.seeds.putV1Seeds(label, seed_data);
 
         // Mock
         mock.onPut(
-            `${BASE_URL}/v1/seeds?label=${label}`,
-            {
-                seeds: [
-                    {
-                        type: "IP_ADDRESS",
-                        value: "8.8.8.8",
-                    },
-                ],
-            },
-            {
-                ...HEADERS,
-                "Content-Type": "application/json",
-            }
+            BASE_URL_V1 + `/seeds?label=${label}`,
+            seed_data,
+            POST_HEADERS
         ).reply(200, {});
 
         // Assertions

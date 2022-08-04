@@ -1,33 +1,41 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import { CensysSearch } from "../src";
-import { OpenAPI } from "../src/core/OpenAPI";
-const Q = "test_query";
-const IP = "8.8.8.8";
-const IPB = "1.1.1.1";
-const BASE_PATH = OpenAPI.BASE;
+import {
+    BASE_URL_V2,
+    CLIENT_CONFIG,
+    HEADERS,
+    IP_ADDRESS,
+    POST_HEADERS,
+} from "./utils";
 
-const SEARCH_PATH = OpenAPI.BASE + "/v2/hosts/search";
-const AGGREGATE_PATH = OpenAPI.BASE + "/v2/hosts/aggregate";
+const IP_ADDRESS_2 = "1.1.1.1";
+
+const TEST_QUERY = "services.service_name: HTTP";
+const TEST_CURSOR = "test_cursor";
+
+// const Q = "test_query";
+// const IP = "8.8.8.8";
+// const IPB = "1.1.1.1";
+// const BASE_PATH = OpenAPI.BASE;
+
+const BASE_HOSTS_URL = BASE_URL_V2 + "/hosts";
+const SEARCH_PATH = BASE_HOSTS_URL + "/search";
+const AGGREGATE_PATH = BASE_HOSTS_URL + "/aggregate";
+
+const REQUEST_BODY = {
+    contents: "test_contents",
+};
 
 const API_RESPONSE = {
     code: 200,
     status: "ok",
     result: "test",
 };
-
-const REQUEST_BODY = {
-    contents: "test_contents",
-};
-
-const HEADERS = {
-    Accept: "application/json",
-};
-
 const SEARCH_HOSTS_RES = {
     ...API_RESPONSE,
     result: {
-        query: Q,
+        query: TEST_QUERY,
         total: 1,
         hits: [
             {
@@ -63,13 +71,11 @@ const SEARCH_HOSTS_RES = {
             },
         ],
     },
-
     links: {
         prev: "prev",
         next: "next",
     },
 };
-
 const AGGREGATE_HOSTS_RES = {
     ...API_RESPONSE,
     result: {
@@ -82,24 +88,12 @@ const AGGREGATE_HOSTS_RES = {
                 count: 1,
             },
         ],
-        query: Q,
+        query: TEST_QUERY,
         field: "test_field",
     },
 };
-
-const SEARCH_HOSTS_ERRORS = {
-    400: `Bad Request.`,
-    401: `You must authenticate with a valid API ID and secret.`,
-    422: `Invalid cursor.`,
-};
-
-const AGGREGATE_HOSTS_ERRORS = {
-    400: `Bad Request.`,
-    401: `You must authenticate with a valid API ID and secret.`,
-};
-
 const HOST = {
-    ip: IP,
+    ip: IP_ADDRESS,
     services: [
         {
             port: 80,
@@ -142,7 +136,6 @@ const HOST = {
         other: undefined,
     },
 };
-
 const VIEW_HOST_RES = {
     ...API_RESPONSE,
     result: {
@@ -152,57 +145,27 @@ const VIEW_HOST_RES = {
         autonomous_system_updated_at: "01-01-2022",
     },
 };
-
-const VIEW_HOST_ERRORS = {
-    401: `You must authenticate with a valid API ID and secret.`,
-    422: `Invalid IP address.`,
-};
-
 const VIEW_HOST_DIFF_RES = {
     ...API_RESPONSE,
     result: {
         a: {
-            /**
-             * The IP address of the original host.
-             */
-            ip: IP,
-            /**
-             * Returned updated timestamp of the original host.
-             */
+            ip: IP_ADDRESS,
             last_updated_at: "01-01-2022",
         },
         b: {
-            /**
-             * The IP address of the other host.
-             */
-            ip: IPB,
-            /**
-             * Returned updated timestamp of the other host.
-             */
+            ip: IP_ADDRESS_2,
             last_updated_at: "01-02-2022",
         },
         patch: [],
     },
 };
-
-const VIEW_HOST_DIFF_ERRORS = {
-    401: `You must authenticate with a valid API ID and secret.`,
-    422: `Invalid IP address.`,
-};
-
 const VIEW_HOST_EVENTS_RES = {
     ...API_RESPONSE,
     result: {
-        ip: IP,
+        ip: IP_ADDRESS,
         events: [{ _event: "test_event", timestamp: "01-01-2022" }],
     },
 };
-
-const VIEW_HOST_EVENTS_ERRORS = {
-    401: `You must authenticate with a valid API ID and secret.`,
-    422: `Invalid IP address.`,
-};
-
 const VIEW_HOST_NAMES_RES = {
     ...API_RESPONSE,
     result: {
@@ -212,19 +175,14 @@ const VIEW_HOST_NAMES_RES = {
         },
     },
 };
-
-const VIEW_HOST_NAMES_ERRORS = {
-    401: `You must authenticate with a valid API ID and secret.`,
-};
-
 const GET_COMMENTS_BY_HOST_RES = {
     ...API_RESPONSE,
     result: {
-        ip: IP,
+        ip: IP_ADDRESS,
         comments: [
             {
                 id: "test_id",
-                ip: IP,
+                ip: IP_ADDRESS,
                 author_id: "test_author_id",
                 contents: "test_contents",
                 created_at: "01-01-2022",
@@ -232,52 +190,71 @@ const GET_COMMENTS_BY_HOST_RES = {
         ],
     },
 };
-
 const ADD_COMMENT_BY_HOST_RES = {
     ...API_RESPONSE,
     result: {
         id: "test_id",
-        ip: IP,
+        ip: IP_ADDRESS,
         author_id: "test_author_id",
         contents: "test_contents",
         created_at: "01-01-2022",
     },
 };
-
-const ADD_COMMENT_BY_HOST_ERRORS = {
-    422: `Unprocessable Entity`,
-};
-
-const GET_COMMENT_BY_HOST_ERRORS = {
-    404: `Not Found`,
-    422: `Unprocessable Entity`,
-};
-
 const GET_HOST_METADATA_RES = {
     ...API_RESPONSE,
     result: {
         services: ["test_service"],
     },
 };
-
 const LIST_HOSTS_FOR_TAG_RES = {
     ...API_RESPONSE,
     result: {
         hosts: [
             {
-                ip: IP,
+                ip: IP_ADDRESS,
                 tagged_at: "01-01-2022",
             },
         ],
     },
 };
-
 const GET_TAGS_BY_HOST_RES = {
     ...API_RESPONSE,
     result: {
-        ip: IP,
+        ip: IP_ADDRESS,
         tags: ["test_tag"],
     },
+};
+
+const VIEW_HOST_ERRORS = {
+    401: `You must authenticate with a valid API ID and secret.`,
+    422: `Invalid IP address.`,
+};
+const VIEW_HOST_DIFF_ERRORS = {
+    401: `You must authenticate with a valid API ID and secret.`,
+    422: `Invalid IP address.`,
+};
+const VIEW_HOST_EVENTS_ERRORS = {
+    401: `You must authenticate with a valid API ID and secret.`,
+    422: `Invalid IP address.`,
+};
+const VIEW_HOST_NAMES_ERRORS = {
+    401: `You must authenticate with a valid API ID and secret.`,
+};
+const SEARCH_HOSTS_ERRORS = {
+    400: `Bad Request.`,
+    401: `You must authenticate with a valid API ID and secret.`,
+    422: `Invalid cursor.`,
+};
+const AGGREGATE_HOSTS_ERRORS = {
+    400: `Bad Request.`,
+    401: `You must authenticate with a valid API ID and secret.`,
+};
+const ADD_COMMENT_BY_HOST_ERRORS = {
+    422: `Unprocessable Entity`,
+};
+const GET_COMMENT_BY_HOST_ERRORS = {
+    404: `Not Found`,
+    422: `Unprocessable Entity`,
 };
 
 describe("HostsService", () => {
@@ -286,7 +263,7 @@ describe("HostsService", () => {
 
     beforeAll(() => {
         mock = new MockAdapter(axios);
-        client = new CensysSearch();
+        client = new CensysSearch(CLIENT_CONFIG);
     });
 
     afterEach(() => {
@@ -296,16 +273,18 @@ describe("HostsService", () => {
     it("should return previews of hosts matching a specified search query", async () => {
         // Actual call
         const hostsPromise = client.hosts.searchHosts(
-            Q,
+            TEST_QUERY,
             1,
             "EXCLUDE",
-            "test_cursor"
+            TEST_CURSOR
         );
 
         // Mock
         mock.onGet(
             SEARCH_PATH +
-                `?q=${Q}&per_page=1&virtual_hosts=EXCLUDE&cursor=test_cursor`,
+                `?q=${encodeURIComponent(
+                    TEST_QUERY
+                )}&per_page=1&virtual_hosts=EXCLUDE&cursor=${TEST_CURSOR}`,
             undefined,
             HEADERS
         ).reply(200, SEARCH_HOSTS_RES);
@@ -321,16 +300,18 @@ describe("HostsService", () => {
     ])("searchHosts should throw errors", async (status, errorMessage) => {
         // Actual call
         const hostsPromise = client.hosts.searchHosts(
-            Q,
+            TEST_QUERY,
             1,
             "EXCLUDE",
-            "test_cursor"
+            TEST_CURSOR
         );
 
         // Mock
         mock.onGet(
             SEARCH_PATH +
-                `?q=${Q}&per_page=1&virtual_hosts=EXCLUDE&cursor=test_cursor`,
+                `?q=${encodeURIComponent(
+                    TEST_QUERY
+                )}&per_page=1&virtual_hosts=EXCLUDE&cursor=${TEST_CURSOR}`,
             undefined,
             HEADERS
         ).reply(status);
@@ -343,7 +324,7 @@ describe("HostsService", () => {
         // Actual call
         const hostsPromise = client.hosts.aggregateHosts(
             "test_field",
-            Q,
+            TEST_QUERY,
             1,
             "EXCLUDE"
         );
@@ -351,7 +332,9 @@ describe("HostsService", () => {
         // Mock
         mock.onGet(
             AGGREGATE_PATH +
-                `?q=${Q}&field=test_field&num_buckets=1&virtual_hosts=EXCLUDE`,
+                `?q=${encodeURIComponent(
+                    TEST_QUERY
+                )}&field=test_field&num_buckets=1&virtual_hosts=EXCLUDE`,
             undefined,
             HEADERS
         ).reply(200, AGGREGATE_HOSTS_RES);
@@ -367,7 +350,7 @@ describe("HostsService", () => {
         // Actual call
         const hostsPromise = client.hosts.aggregateHosts(
             "test_field",
-            Q,
+            TEST_QUERY,
             1,
             "EXCLUDE"
         );
@@ -375,7 +358,9 @@ describe("HostsService", () => {
         // Mock
         mock.onGet(
             AGGREGATE_PATH +
-                `?q=${Q}&field=test_field&num_buckets=1&virtual_hosts=EXCLUDE`,
+                `?q=${encodeURIComponent(
+                    TEST_QUERY
+                )}&field=test_field&num_buckets=1&virtual_hosts=EXCLUDE`,
             undefined,
             HEADERS
         ).reply(status);
@@ -386,11 +371,11 @@ describe("HostsService", () => {
 
     it("should return host information for the specified IP address", async () => {
         // Actual call
-        const hostsPromise = client.hosts.viewHost(IP, "01-01-2022");
+        const hostsPromise = client.hosts.viewHost(IP_ADDRESS, "01-01-2022");
 
         // Mock
         mock.onGet(
-            BASE_PATH + "/v2/hosts/" + IP + "?at_time=01-01-2022",
+            BASE_HOSTS_URL + "/" + IP_ADDRESS + "?at_time=01-01-2022",
             undefined,
             HEADERS
         ).reply(200, VIEW_HOST_RES);
@@ -404,11 +389,11 @@ describe("HostsService", () => {
         [422, VIEW_HOST_ERRORS[422]],
     ])("viewHost should throw errors", async (status, errorMessage) => {
         // Actual call
-        const hostsPromise = client.hosts.viewHost(IP, "01-01-2022");
+        const hostsPromise = client.hosts.viewHost(IP_ADDRESS, "01-01-2022");
 
         // Mock
         mock.onGet(
-            BASE_PATH + "/v2/hosts/" + IP + "?at_time=01-01-2022",
+            BASE_HOSTS_URL + "/" + IP_ADDRESS + "?at_time=01-01-2022",
             undefined,
             HEADERS
         ).reply(status);
@@ -424,16 +409,16 @@ describe("HostsService", () => {
 
         // Actual call
         const hostsPromise = client.hosts.viewHostDiff(
-            IP,
-            IPB,
+            IP_ADDRESS,
+            IP_ADDRESS_2,
             atTime,
             atTimeB
         );
 
         // Mock
         mock.onGet(
-            BASE_PATH +
-                `/v2/hosts/${IP}/diff?ip_b=${IPB}&at_time=${atTime}&at_time_b=${atTimeB}`,
+            BASE_URL_V2 +
+                `/hosts/${IP_ADDRESS}/diff?ip_b=${IP_ADDRESS_2}&at_time=${atTime}&at_time_b=${atTimeB}`,
             undefined,
             HEADERS
         ).reply(200, VIEW_HOST_DIFF_RES);
@@ -448,16 +433,16 @@ describe("HostsService", () => {
     ])("viewHostDiff should throw errors", async (status, errorMessage) => {
         // Actual call
         const hostsPromise = client.hosts.viewHostDiff(
-            IP,
-            IPB,
+            IP_ADDRESS,
+            IP_ADDRESS_2,
             "01-01-2022",
             "01-02-2022"
         );
 
         // Mock
         mock.onGet(
-            BASE_PATH +
-                `/v2/hosts/${IP}/diff?ip_b=${IPB}&at_time=01-01-2022&at_time_b=01-02-2022`,
+            BASE_URL_V2 +
+                `/hosts/${IP_ADDRESS}/diff?ip_b=${IP_ADDRESS_2}&at_time=01-01-2022&at_time_b=01-02-2022`,
             undefined,
             HEADERS
         ).reply(status);
@@ -468,25 +453,25 @@ describe("HostsService", () => {
 
     it("should return host events for the specified IP address", async () => {
         // Test data
-        const start_time = "01-01-2022";
-        const end_time = "01-02-2022";
-        const per_page = 1;
-        const cursor = "test_cursor";
+        const startTime = "01-01-2022";
+        const endTime = "01-02-2022";
+        const perPage = 1;
         const reversed = true;
+
         // Actual call
         const hostsPromise = client.hosts.viewHostEvents(
-            IP,
-            start_time,
-            end_time,
-            per_page,
-            cursor,
+            IP_ADDRESS,
+            startTime,
+            endTime,
+            perPage,
+            TEST_CURSOR,
             reversed
         );
 
         // Mock
         mock.onGet(
-            BASE_PATH +
-                `/v2/experimental/hosts/${IP}/events?start_time=${start_time}&end_time=${end_time}&per_page=${per_page}&cursor=${cursor}&reversed=true`,
+            BASE_URL_V2 +
+                `/experimental/hosts/${IP_ADDRESS}/events?start_time=${startTime}&end_time=${endTime}&per_page=${perPage}&cursor=${TEST_CURSOR}&reversed=${reversed.toString()}`,
             undefined,
             HEADERS
         ).reply(200, VIEW_HOST_EVENTS_RES);
@@ -499,20 +484,26 @@ describe("HostsService", () => {
         [401, VIEW_HOST_EVENTS_ERRORS[401]],
         [422, VIEW_HOST_EVENTS_ERRORS[422]],
     ])("viewHostEvents should throw errors", async (status, errorMessage) => {
+        // Test data
+        const startTime = "01-01-2022";
+        const endTime = "01-02-2022";
+        const perPage = 1;
+        const reversed = true;
+
         // Actual call
         const hostsPromise = client.hosts.viewHostEvents(
-            IP,
-            "01-01-2022",
-            "01-02-2022",
-            1,
-            "test_cursor",
-            true
+            IP_ADDRESS,
+            startTime,
+            endTime,
+            perPage,
+            TEST_CURSOR,
+            reversed
         );
 
         // Mock
         mock.onGet(
-            BASE_PATH +
-                `/v2/experimental/hosts/${IP}/events?start_time=01-01-2022&end_time=01-02-2022&per_page=1&cursor=test_cursor&reversed=true`,
+            BASE_URL_V2 +
+                `/experimental/hosts/${IP_ADDRESS}/events?start_time=${startTime}&end_time=${endTime}&per_page=${perPage}&cursor=${TEST_CURSOR}&reversed=${reversed.toString()}`,
             undefined,
             HEADERS
         ).reply(status);
@@ -524,15 +515,18 @@ describe("HostsService", () => {
     it("should return host names for the specified IP address", async () => {
         // Test data
         const perPage = 1;
-        const cursor = "test_cursor";
 
         // Actual call
-        const hostsPromise = client.hosts.viewHostNames(IP, perPage, cursor);
+        const hostsPromise = client.hosts.viewHostNames(
+            IP_ADDRESS,
+            perPage,
+            TEST_CURSOR
+        );
 
         // Mock
         mock.onGet(
-            BASE_PATH +
-                `/v2/hosts/${IP}/names?per_page=${perPage}&cursor=${cursor}`,
+            BASE_HOSTS_URL +
+                `/${IP_ADDRESS}/names?per_page=${perPage}&cursor=${TEST_CURSOR}`,
             undefined,
             HEADERS
         ).reply(200, VIEW_HOST_NAMES_RES);
@@ -544,17 +538,20 @@ describe("HostsService", () => {
     it.each([[401, VIEW_HOST_NAMES_ERRORS[401]]])(
         "viewHostNames should throw errors",
         async (status, errorMessage) => {
+            // Test data
+            const perPage = 1;
+
             // Actual call
             const hostsPromise = client.hosts.viewHostNames(
-                IP,
-                1,
-                "test_cursor"
+                IP_ADDRESS,
+                perPage,
+                TEST_CURSOR
             );
 
             // Mock
             mock.onGet(
-                BASE_PATH +
-                    `/v2/hosts/${IP}/names?per_page=1&cursor=test_cursor`,
+                BASE_HOSTS_URL +
+                    `/${IP_ADDRESS}/names?per_page=${perPage}&cursor=${TEST_CURSOR}`,
                 undefined,
                 HEADERS
             ).reply(status);
@@ -566,11 +563,11 @@ describe("HostsService", () => {
 
     it("should return a list of comments on the given host", async () => {
         // Actual call
-        const hostsPromise = client.hosts.getCommentsByHost(IP);
+        const hostsPromise = client.hosts.getCommentsByHost(IP_ADDRESS);
 
         // Mock
         mock.onGet(
-            BASE_PATH + `/v2/hosts/${IP}/comments`,
+            BASE_HOSTS_URL + `/${IP_ADDRESS}/comments`,
             undefined,
             HEADERS
         ).reply(200, GET_COMMENTS_BY_HOST_RES);
@@ -581,13 +578,17 @@ describe("HostsService", () => {
 
     it("should add a comment to the given host", async () => {
         // Actual call
-        const hostsPromise = client.hosts.addCommentByHost(IP, REQUEST_BODY);
+        const hostsPromise = client.hosts.addCommentByHost(
+            IP_ADDRESS,
+            REQUEST_BODY
+        );
 
         // Mock
-        mock.onPost(BASE_PATH + `/v2/hosts/${IP}/comments`, REQUEST_BODY, {
-            ...HEADERS,
-            "Content-Type": "application/json",
-        }).reply(200, ADD_COMMENT_BY_HOST_RES);
+        mock.onPost(
+            BASE_URL_V2 + `/hosts/${IP_ADDRESS}/comments`,
+            REQUEST_BODY,
+            POST_HEADERS
+        ).reply(200, ADD_COMMENT_BY_HOST_RES);
 
         // Assert
         await expect(hostsPromise).resolves.toEqual(ADD_COMMENT_BY_HOST_RES);
@@ -595,13 +596,17 @@ describe("HostsService", () => {
 
     it("addCommentByHost should throw an error", async () => {
         // Actual call
-        const hostsPromise = client.hosts.addCommentByHost(IP, REQUEST_BODY);
+        const hostsPromise = client.hosts.addCommentByHost(
+            IP_ADDRESS,
+            REQUEST_BODY
+        );
 
         // Mock
-        mock.onPost(BASE_PATH + `/v2/hosts/${IP}/comments`, REQUEST_BODY, {
-            ...HEADERS,
-            "Content-Type": "application/json",
-        }).reply(422);
+        mock.onPost(
+            BASE_URL_V2 + `/hosts/${IP_ADDRESS}/comments`,
+            REQUEST_BODY,
+            POST_HEADERS
+        ).reply(422);
 
         // Assert
         await expect(hostsPromise).rejects.toThrowError(
@@ -612,11 +617,14 @@ describe("HostsService", () => {
     it("should return a specific comment on the given host", async () => {
         // Actual call
         const comment_id = "test_comment_id";
-        const hostsPromise = client.hosts.getCommentByHost(IP, comment_id);
+        const hostsPromise = client.hosts.getCommentByHost(
+            IP_ADDRESS,
+            comment_id
+        );
 
         // Mock
         mock.onGet(
-            BASE_PATH + `/v2/hosts/${IP}/comments/${comment_id}`,
+            BASE_URL_V2 + `/hosts/${IP_ADDRESS}/comments/${comment_id}`,
             undefined,
             HEADERS
         ).reply(200, ADD_COMMENT_BY_HOST_RES);
@@ -631,11 +639,14 @@ describe("HostsService", () => {
     ])("getCommentByHost should throw errors", async (status, errorMessage) => {
         // Actual call
         const comment_id = "test_comment_id";
-        const hostsPromise = client.hosts.getCommentByHost(IP, comment_id);
+        const hostsPromise = client.hosts.getCommentByHost(
+            IP_ADDRESS,
+            comment_id
+        );
 
         // Mock
         mock.onGet(
-            BASE_PATH + `/v2/hosts/${IP}/comments/${comment_id}`,
+            BASE_URL_V2 + `/hosts/${IP_ADDRESS}/comments/${comment_id}`,
             undefined,
             HEADERS
         ).reply(status);
@@ -648,19 +659,16 @@ describe("HostsService", () => {
         // Actual call
         const comment_id = "test_comment_id";
         const hostsPromise = client.hosts.updateCommentByHost(
-            IP,
+            IP_ADDRESS,
             comment_id,
             REQUEST_BODY
         );
 
         // Mock
         mock.onPut(
-            BASE_PATH + `/v2/hosts/${IP}/comments/${comment_id}`,
+            BASE_URL_V2 + `/hosts/${IP_ADDRESS}/comments/${comment_id}`,
             REQUEST_BODY,
-            {
-                ...HEADERS,
-                "Content-Type": "application/json",
-            }
+            POST_HEADERS
         ).reply(200, ADD_COMMENT_BY_HOST_RES);
 
         // Assert
@@ -676,19 +684,16 @@ describe("HostsService", () => {
             // Actual call
             const comment_id = "test_comment_id";
             const hostsPromise = client.hosts.updateCommentByHost(
-                IP,
+                IP_ADDRESS,
                 comment_id,
                 REQUEST_BODY
             );
 
             // Mock
             mock.onPut(
-                BASE_PATH + `/v2/hosts/${IP}/comments/${comment_id}`,
+                BASE_URL_V2 + `/hosts/${IP_ADDRESS}/comments/${comment_id}`,
                 REQUEST_BODY,
-                {
-                    ...HEADERS,
-                    "Content-Type": "application/json",
-                }
+                POST_HEADERS
             ).reply(status);
 
             // Assert
@@ -699,11 +704,14 @@ describe("HostsService", () => {
     it("should delete a specific comment on the given host", async () => {
         // Actual call
         const comment_id = "test_comment_id";
-        const hostsPromise = client.hosts.deleteCommentByHost(IP, comment_id);
+        const hostsPromise = client.hosts.deleteCommentByHost(
+            IP_ADDRESS,
+            comment_id
+        );
 
         // Mock
         mock.onDelete(
-            BASE_PATH + `/v2/hosts/${IP}/comments/${comment_id}`,
+            BASE_URL_V2 + `/hosts/${IP_ADDRESS}/comments/${comment_id}`,
             undefined,
             HEADERS
         ).reply(200);
@@ -721,13 +729,13 @@ describe("HostsService", () => {
             // Actual call
             const comment_id = "test_comment_id";
             const hostsPromise = client.hosts.deleteCommentByHost(
-                IP,
+                IP_ADDRESS,
                 comment_id
             );
 
             // Mock
             mock.onDelete(
-                BASE_PATH + `/v2/hosts/${IP}/comments/${comment_id}`,
+                BASE_URL_V2 + `/hosts/${IP_ADDRESS}/comments/${comment_id}`,
                 undefined,
                 HEADERS
             ).reply(status);
@@ -737,12 +745,12 @@ describe("HostsService", () => {
         }
     );
 
-    it("should return host metatdata about what Censys scans for", async () => {
+    it("should return host metadata about what Censys scans for", async () => {
         // Actual call
         const hostsPromise = client.hosts.getHostMetadata();
 
         // Mock
-        mock.onGet(BASE_PATH + `/v2/metadata/hosts`, undefined, HEADERS).reply(
+        mock.onGet(BASE_URL_V2 + `/metadata/hosts`, undefined, HEADERS).reply(
             200,
             GET_HOST_METADATA_RES
         );
@@ -759,11 +767,10 @@ describe("HostsService", () => {
         const hostsPromise = client.hosts.listHostsForTag(id);
 
         // Mock
-        mock.onGet(
-            BASE_PATH + `/v2/tags/${id}/hosts`,
-            undefined,
-            HEADERS
-        ).reply(200, LIST_HOSTS_FOR_TAG_RES);
+        mock.onGet(BASE_URL_V2 + `/tags/${id}/hosts`, undefined, HEADERS).reply(
+            200,
+            LIST_HOSTS_FOR_TAG_RES
+        );
 
         // Assert
         await expect(hostsPromise).resolves.toEqual(LIST_HOSTS_FOR_TAG_RES);
@@ -771,11 +778,11 @@ describe("HostsService", () => {
 
     it("should return a list of tags on the given host", async () => {
         // Actual call
-        const hostsPromise = client.hosts.getTagsByHost(IP);
+        const hostsPromise = client.hosts.getTagsByHost(IP_ADDRESS);
 
         // Mock
         mock.onGet(
-            BASE_PATH + `/v2/hosts/${IP}/tags`,
+            BASE_HOSTS_URL + `/${IP_ADDRESS}/tags`,
             undefined,
             HEADERS
         ).reply(200, GET_TAGS_BY_HOST_RES);
@@ -787,10 +794,10 @@ describe("HostsService", () => {
     //TODO fix this test
     it("should add a tag to the given host", async () => {
         // Actual call
-        const hostsPromise = client.hosts.tagHost(IP, "test_tag");
+        const hostsPromise = client.hosts.tagHost(IP_ADDRESS, "test_tag");
 
         // Mock
-        mock.onPut(BASE_PATH + `/v2/hosts/${IP}/tags/test_tag`).reply(204);
+        mock.onPut(BASE_HOSTS_URL + `/${IP_ADDRESS}/tags/test_tag`).reply(204);
 
         // Assert
         await expect(hostsPromise).resolves.not.toThrow();
@@ -799,11 +806,11 @@ describe("HostsService", () => {
     it("should remove a tag on the given host", async () => {
         // Actual call
         const id = "test_id";
-        const hostsPromise = client.hosts.untagHost(IP, id);
+        const hostsPromise = client.hosts.untagHost(IP_ADDRESS, id);
 
         // Mock
         mock.onDelete(
-            BASE_PATH + `/v2/hosts/${IP}/tags/${id}`,
+            BASE_HOSTS_URL + `/${IP_ADDRESS}/tags/${id}`,
             undefined,
             HEADERS
         ).reply(204);

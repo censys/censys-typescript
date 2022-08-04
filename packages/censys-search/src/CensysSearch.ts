@@ -42,6 +42,8 @@ export class CensysSearch {
             TOKEN: config?.TOKEN,
             USERNAME: config?.USERNAME,
             PASSWORD: config?.PASSWORD,
+            API_ID: config?.API_ID,
+            API_SECRET: config?.API_SECRET,
             HEADERS: config?.HEADERS,
             ENCODE_PATH: config?.ENCODE_PATH,
         });
