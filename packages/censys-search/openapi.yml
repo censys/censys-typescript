@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Censys Search API
-  description: 
+  description:
     "The Censys REST API provides programmatic access to the same data accessible through the web
     interface. API access is governed by our [Terms of Service](https://censys.io/tos/) and all scripted access should use this API.
     Endpoints are hosted at [`https://search.censys.io`](https://search.censys.io) and require authenticating with HTTP basic auth using
@@ -15,16 +15,16 @@ info:
     name: Support
     email: support@censys.io
   version: "2.0"
-servers: 
+servers:
   - url: https://search.censys.io/api
 security:
   - basicAuth: []
 tags:
   - name: hosts
     description: Everything about Hosts (v2)
-  - name: certificates
+  - name: certificates v1
     description: Everything about Certificates (v1)
-  - name: certs
+  - name: certificates v2
     description: Everything about Certificates (v2)
   - name: data
     description: Everything about Data (v1)
@@ -160,6 +160,15 @@ paths:
               examples:
                 invalidCursorExample:
                   $ref: "#/components/examples/invalidCursorExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
   /v2/hosts/aggregate:
     get:
       tags:
@@ -184,7 +193,7 @@ paths:
             example: "service.service_name: HTTP"
         - name: field
           in: query
-          description: 
+          description:
             The field used to aggregated upon and generate buckets for.
             If the field is a service level field, the aggregation result
             will be based on services which belong to hosts which match
@@ -276,6 +285,15 @@ paths:
               examples:
                 unauthorizedExample:
                   $ref: "#/components/examples/unauthorizedExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
   /v2/hosts/{ip}:
     get:
       tags:
@@ -346,6 +364,15 @@ paths:
               examples:
                 invalidIpExample:
                   $ref: "#/components/examples/invalidIpExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
   /v2/hosts/{ip}/diff:
     get:
       tags:
@@ -454,6 +481,15 @@ paths:
               examples:
                 invalidIpExample:
                   $ref: "#/components/examples/invalidIpExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
   /v2/experimental/hosts/{ip}/events:
     get:
       tags:
@@ -490,7 +526,7 @@ paths:
           schema:
             type: string
             example: 1.1.1.1
-            maxLength: 39
+            maxLength: 90
         - name: start_time
           in: query
           description: |
@@ -577,6 +613,15 @@ paths:
               examples:
                 invalidIpExample:
                   $ref: "#/components/examples/invalidIpExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
   /v2/hosts/{ip}/names:
     get:
       tags:
@@ -584,7 +629,7 @@ paths:
       summary: Returns host names for the specified IP address
       description:
         Fetches a list of host names for the specified IP address.
-        
+
       operationId: viewHostNames
       parameters:
         - name: ip
@@ -638,7 +683,7 @@ paths:
                           next:
                             type: string
                             example: "nextCursorToken"
-                          
+
         401:
           description: You must authenticate with a valid API ID and secret.
           content:
@@ -648,6 +693,15 @@ paths:
               examples:
                 unauthorizedExample:
                   $ref: "#/components/examples/unauthorizedExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
   /v2/hosts/{ip}/comments:
     get:
       tags:
@@ -905,10 +959,682 @@ paths:
                           - "MQTT"
                           - "SSH"
                           - "..."
+  /v2/certificates/{fingerprint}:
+    get:
+      tags:
+        - certificates v2
+      summary: Returns the certificate record for the specified SHA-256 fingerprint.
+      description: |
+        Fetches the certificate record for the specified SHA-256 fingerprint, including parsed data, certificate transparency log information, root store trust information, zlint results, and Censys observation metadata.
+      operationId: getCertByFingerprint
+      parameters:
+        - name: fingerprint
+          in: path
+          description: The SHA-256 fingerprint of the requested certificate.
+          required: true
+          schema:
+            type: string
+            example: 9b00121b4e85d50667ded1a8aa39855771bdb67ceca6f18726b49374b41f0041
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                properties:
+                  result:
+                    $ref: "#/components/schemas/CertificateV2"
+        400:
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                invalidSearchExample:
+                  $ref: "#/components/examples/invalidSearchExample"
+        401:
+          description: You must authenticate with a valid API ID and secret.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                unauthorizedExample:
+                  $ref: "#/components/examples/unauthorizedExample"
+        422:
+          description: Invalid SHA-256 fingerprint.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                invalidCertExample:
+                  $ref: "#/components/examples/invalidCertExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
+        500:
+          description: An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ApiErrorResponse"
+              examples:
+                v1InternalServerErrorExample:
+                  $ref: "#/components/examples/v1InternalServerErrorExample"
+  /v2/certificates/bulk:
+    get:
+      tags:
+        - certificates v2
+      summary: Returns certificate records for up to 1000 specified SHA-256 fingerprints.
+      description:
+        "Fetches the certificate records for the specified SHA-256 fingerprints, including parsed data, certificate transparency log information,
+        root store trust information, zlint results, and Censys observation metadata.
+        \n\n
+        Each requested certificate will be available as a key in the response, regardless of whether or
+        not we know anything about them. Any certificates which we don't know anything about will be replaced
+        by an error, as shown at the top of the example below."
+      operationId: getBulkCerts
+      parameters:
+        - name: fingerprints
+          in: query
+          description: The SHA-256 fingerprints of the requested certificate records.
+          required: true
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+            example:
+              - 9b00121b4e85d50667ded1a8aa39855771bdb67ceca6f18726b49374b41f0041
+              - be722596c9fff071367ff4db5c4495d0bfa035917ffefff0c0c359e536f2ae5b
+              - 8f066c8dfdd3c0bff724f7c77d3c0b375d4c78afcfa2f083883ae47a51cd4d55
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CertificateV2"
+        400:
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                invalidSearchExample:
+                  $ref: "#/components/examples/invalidSearchExample"
+        401:
+          description: You must authenticate with a valid API ID and secret.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                unauthorizedExample:
+                  $ref: "#/components/examples/unauthorizedExample"
+        422:
+          description: Invalid SHA-256 fingerprint.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                invalidCertExample:
+                  $ref: "#/components/examples/invalidCertExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
+        500:
+          description: An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ApiErrorResponse"
+              examples:
+                v1InternalServerErrorExample:
+                  $ref: "#/components/examples/v1InternalServerErrorExample"
+    post:
+      tags:
+        - certificates v2
+      summary: Returns certificate records for up to 1000 specified SHA-256 fingerprints.
+      description:
+        "Fetches the certificate records for the specified SHA-256 fingerprints, including parsed data, certificate transparency log information,
+        root store trust information, zlint results, and Censys observation metadata.
+        \n\n
+        Each requested certificate will be available as a key in the response, regardless of whether or
+        not we know anything about them. Any certificates which we don't know anything about will be replaced
+        by an error, as shown at the top of the example below."
+      operationId: postBulkCerts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fingerprints:
+                  description: The SHA-256 fingerprints of the requested certificate records.
+                  required:
+                    - fingerprints
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - 9b00121b4e85d50667ded1a8aa39855771bdb67ceca6f18726b49374b41f0041
+                    - be722596c9fff071367ff4db5c4495d0bfa035917ffefff0c0c359e536f2ae5b
+                    - 8f066c8dfdd3c0bff724f7c77d3c0b375d4c78afcfa2f083883ae47a51cd4d55
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                properties:
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CertificateV2"
+        400:
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                invalidSearchExample:
+                  $ref: "#/components/examples/invalidSearchExample"
+        401:
+          description: You must authenticate with a valid API ID and secret.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                unauthorizedExample:
+                  $ref: "#/components/examples/unauthorizedExample"
+        422:
+          description: Invalid SHA-256 fingerprint.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                invalidCertExample:
+                  $ref: "#/components/examples/invalidCertExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
+        500:
+          description: An unexpected error occurred when trying to execute your query. Try again at a later time or contact us at [support@censys.io](mailto:support@censys.io) if the problem persists.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1ApiErrorResponse"
+              examples:
+                v1InternalServerErrorExample:
+                  $ref: "#/components/examples/v1InternalServerErrorExample"
+  /v2/certificates/search:
+    get:
+      tags:
+        - certificates v2
+      summary: Returns previews of certificate records matching a specified query.
+      description:
+        "Accepts queries for certificate attributes provided in the Censys
+        Search Language and returns a list of matching certificates with some summary fields.
+        \n\n
+        **Cursor Pagination**
+        \n\n
+        Search endpoints rely on using cursors for efficient pagination.
+        \n\n
+        Each search result may return a `next` and `prev` cursor value
+        which can be used to fetch additional pages of results.
+        \n\n
+        ```json
+          \n{\n\t\"links\":{
+          \n\t\t\"prev\":\"prevCursorToken\",
+          \n\t\t\"next\":\"nextCursorToken\"
+          \n\t},
+          \n\t[Rest of Response]\n}
+          \n
+        ```
+        \n
+        The returned cursor token values can be added to the search endpoint as
+        a `cursor` parameter to fetch either the next page of results or the previous page.
+        \n\n
+        The entire set of results can be iterated page-by-page using returned
+        cursors. If no cursor is given, the first page will be returned."
+      externalDocs:
+        url: /search/language
+      operationId: getSearchCertificates
+      parameters:
+        - name: q
+          in: query
+          description: Query used to search for certificates with matching attributes. Uses the Censys Search Language.
+          schema:
+            type: string
+            example: "parsed.subject.country: AU"
+        - name: per_page
+          in: query
+          description:
+            The maximum number of hits to return in each response (minimum of 1, maximum of 100).
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+        - name: cursor
+          in: query
+          description:
+            Cursor token from the API response, which fetches the next or previous page of hits when added to the endpoint URL.
+          schema:
+            type: string
+        - name: fields
+          in: query
+          description: |
+            Additional fields to return in the matched certificates outside of the default returned fields.
+            For a list of additional fields to search on take a look at the data definition for the certs2 model.
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+            example:
+              - "names"
+              - "fingerprint_sha256"
+              - "parsed.issuer.organization"
+              - "parsed.subject.postal_code"
+        - name: sort
+          in: query
+          description: |
+            A list of fields to sort on. By default, fields will be sorted in ascending order. To sort in
+            descending order, prepend a '-' to the field name, ie: '-fingerprint_sha256'
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+            example:
+              - "parsed.issuer.organization"
+              - "parsed.subject.country"
+              - "-parsed.subject.postal_code"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      query:
+                        type: string
+                        example: "parsed.subject.country: AU"
+                      total:
+                        type: integer
+                        example: 50000
+                      duration_ms:
+                        type: integer
+                        example: 356
+                      hits:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: "#/components/schemas/CertHit"
+                        maxItems: 100
+                  links:
+                    type: object
+                    properties:
+                      prev:
+                        type: string
+                        example: "prevCursorToken"
+                      next:
+                        type: string
+                        example: "nextCursorToken"
+        400:
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                invalidSearchExample:
+                  $ref: "#/components/examples/invalidSearchExample"
+        401:
+          description: You must authenticate with a valid API ID and secret.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                unauthorizedExample:
+                  $ref: "#/components/examples/unauthorizedExample"
+        422:
+          description: Invalid cursor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                invalidCursorExample:
+                  $ref: "#/components/examples/invalidCursorExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
+    post:
+      tags:
+        - certificates v2
+      summary: Returns previews of certificates matching a specified search query.
+      description:
+        "Accepts queries for certificate attributes provided in the Censys
+        Search Language and returns a list of matching certificates with some summary fields.
+        \n\n
+        **Cursor Pagination**
+        \n\n
+        Search endpoints rely on using cursors for efficient pagination.
+        \n\n
+        Each search result may return a `next` and `prev` cursor value
+        which can be used to fetch additional pages of results.
+        \n\n
+        ```json
+          \n{\n\t\"links\":{
+          \n\t\t\"prev\":\"prevCursorToken\",
+          \n\t\t\"next\":\"nextCursorToken\"
+          \n\t},
+          \n\t[Rest of Response]\n}
+          \n
+        ```
+        \n
+        The returned cursor token values can be added to the search endpoint as
+        a `cursor` parameter to fetch either the next page of results or the previous page.
+        \n\n
+        The entire set of results can be iterated page-by-page using returned
+        cursors. If no cursor is given, the first page will be returned."
+      externalDocs:
+        url: /search/language
+      operationId: postSearchCertificates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                q:
+                  description: Query used to search for certificates with matching attributes. Uses the Censys Search Language.
+                  type: string
+                  example: "parsed.subject.country: AU"
+                per_page:
+                  description:
+                    The maximum number of hits to return in each response (minimum of 1, maximum of 100).
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 50
+                cursor:
+                  description:
+                    Cursor token from the API response, which fetches the next or previous page of hits when added to the endpoint URL.
+                  type: string
+                  example: eyJ2ZXJzaW9uIjoxLCJzb3J0IjpbeyJmaW5nZXJwcmludF9zaGEyNTYuX19yYXciOnsib3JkZXIiOiJhc2MiLCJtb2RlIjoibWluIiwibWlzc2luZyI6Il9sYXN0In19LHsiX3Njb3JlIjp7Im9yZGVyIjoiZGVzYyJ9fSx7ImZpbmdlcnByaW50X3NoYTI1Ni5fX3JhdyI6eyJvcmRlciI6ImFzYyIsIm1vZGUiOiJtaW4iLCJtaXNzaW5nIjoiX2xhc3QifX1dLCJzZWFyY2hfYWZ0ZXIiOlsiIiwwLjAsIiJdLCJyZXZlcnNlZCI6ZmFsc2V9
+                fields:
+                  description: |
+                    Additional fields to return in the matched certificates outside of the default returned fields.
+                    For a list of additional fields to search on take a look at the data definition for the certs2 model.
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - "names"
+                    - "fingerprint_sha256"
+                    - "parsed.issuer.organization"
+                    - "parsed.subject.postal_code"
+                sort:
+                  description: |
+                    A list of fields to sort on. By default, fields will be sorted in ascending order. To sort in
+                    descending order, prepend a '-' to the field name, ie: '-fingerprint_sha256'
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - "parsed.issuer.organization"
+                    - "parsed.subject.postal_code"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      query:
+                        type: string
+                        example: "parsed.subject.country: AU"
+                      total:
+                        type: integer
+                        example: 50000
+                      duration_ms:
+                        type: integer
+                        example: 356
+                      hits:
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: "#/components/schemas/CertHit"
+                        maxItems: 100
+                  links:
+                    type: object
+                    properties:
+                      prev:
+                        type: string
+                        example: "prevCursorToken"
+                      next:
+                        type: string
+                        example: "nextCursorToken"
+        400:
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                invalidSearchExample:
+                  $ref: "#/components/examples/invalidSearchExample"
+        401:
+          description: You must authenticate with a valid API ID and secret.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                unauthorizedExample:
+                  $ref: "#/components/examples/unauthorizedExample"
+        422:
+          description: Invalid cursor.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                invalidCursorExample:
+                  $ref: "#/components/examples/invalidCursorExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
+  /v2/certificates/aggregate:
+    get:
+      tags:
+        - certificates v2
+      summary: Returns aggregation of certificates that match the given query string.
+      description: |
+        Aggregates certificate records matching a specified query into buckets based on the given field.
+        See help on the Censys Search Language for help on constructing a search query.
+      externalDocs:
+        url: /search/language
+      operationId: aggregateCertificates
+      parameters:
+        - name: q
+          in: query
+          description:
+            Query used to search for Certificates which will be aggregated.
+            Query uses the Censys Search Language.
+          schema:
+            type: string
+            example: "parsed.subject.country: AU"
+        - name: field
+          in: query
+          description:
+            The field used to aggregated upon and generate buckets for.
+            Buckets will be sorted in descending order from most commonly occuring
+            value to the least based on the number of buckets requested.
+          required: true
+          schema:
+            type: string
+            example: parsed.issuer.organization
+        - name: num_buckets
+          in: query
+          description:
+            The maximum number of buckets used to generate aggregate results.
+          schema:
+            type: integer
+            maximum: 100
+            minimum: 1
+            default: 50
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/ApiResponse"
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      query:
+                        type: string
+                        example: "parsed.subject.country: AU"
+                      field:
+                        type: string
+                        example: parsed.issuer.organization
+                      total:
+                        type: integer
+                        example: 58906.0
+                      duration_ms:
+                        type: integer
+                        example: 690
+                      buckets:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            key:
+                              type: string
+                            count:
+                              type: integer
+                        maxItems: 100
+                        example:
+                          - key: "Internet Widgits Pty Ltd"
+                            count: 23748.0
+                          - key: "DigiCert Inc"
+                            count: 10885.0
+                          - key: "QuoVadis Limited"
+                            count: 1883.0
+                          - key: "Entrust, Inc."
+                            count: 1475.0
+                          - key: "Webmin"
+                            count: 1071.0
+        400:
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                invalidSearchExample:
+                  $ref: "#/components/examples/invalidSearchExample"
+                invalidFieldExample:
+                  $ref: "#/components/examples/invalidFieldExample"
+                invalidNumBucketsExample:
+                  $ref: "#/components/examples/invalidNumBucketsExample"
+        401:
+          description: You must authenticate with a valid API ID and secret.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                unauthorizedExample:
+                  $ref: "#/components/examples/unauthorizedExample"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
   /v2/certificates/{fingerprint}/hosts:
     get:
       tags:
-        - certs
+        - certificates v2
       summary: Returns a list of hosts presenting the given certificate.
       description: |
         Returns a list of hosts which contain services presenting this certificate,
@@ -988,10 +1714,19 @@ paths:
                           next:
                             type: string
                             example: "nextCursorToken"
+        429:
+          description: Too many requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiErrorResponse"
+              examples:
+                tooManyRequestsExample:
+                  $ref: "#/components/examples/tooManyRequestsExample"
   /v2/certificates/{fingerprint}/comments:
     get:
       tags:
-        - certs
+        - certificates v2
         - comments
       summary: Returns a list of comments on the given cert.
       description: |
@@ -1027,7 +1762,7 @@ paths:
                           $ref: "#/components/schemas/CertComment"
     post:
       tags:
-        - certs
+        - certificates v2
         - comments
       summary: Adds a comment on the given cert.
       description: |
@@ -1066,7 +1801,7 @@ paths:
   /v2/certificates/{fingerprint}/comments/{comment_id}:
     get:
       tags:
-        - certs
+        - certificates v2
         - comments
       summary: Returns a comment on the given cert.
       description: |
@@ -1101,7 +1836,7 @@ paths:
                     $ref: "#/components/schemas/CertComment"
     put:
       tags:
-        - certs
+        - certificates v2
         - comments
       summary: Updates a comment on the given cert.
       description: |
@@ -1158,7 +1893,7 @@ paths:
                     example: "Not Found"
     delete:
       tags:
-        - certs
+        - certificates v2
         - comments
       summary: Deletes a comment on the given cert.
       description: |
@@ -1214,7 +1949,7 @@ paths:
   /v1/view/certificates/{sha256}:
     get:
       tags:
-        - certificates
+        - certificates v1
       summary: Returns structured certificate data for the specified SHA-256 fingerprint
       description:
         "> The Censys legacy v1 API contains API endpoints which are being maintained until replacement v2 endpoints are available.
@@ -1266,7 +2001,7 @@ paths:
   /v1/search/certificates:
     post:
       tags:
-        - certificates
+        - certificates v1
       summary: Returns a list of certificates that match the given query
       description:
         "> The Censys legacy v1 API contains API endpoints which are being maintained until replacement v2 endpoints are available.
@@ -1365,7 +2100,7 @@ paths:
   /v1/report/certificates:
     post:
       tags:
-        - certificates
+        - certificates v1
       summary: Returns a report for the given query
       description:
         "> The Censys legacy v1 API contains API endpoints which are being maintained until replacement v2 endpoints are available.
@@ -1469,7 +2204,7 @@ paths:
   /v1/bulk/certificates:
     post:
       tags:
-        - certificates
+        - certificates v1
       summary: Returns structured data about certificates in bulk for the specified SHA-256 fingerprints
       description:
         "> The Censys legacy v1 API contains API endpoints which are being maintained until replacement v2 endpoints are available.
@@ -1512,7 +2247,6 @@ paths:
                       error_type: "unknown"
                       status: "error"
                     48177e03b47bdcb3b6ab28a92f8005b95302418cd5b9ede77a97eb918e4a2da2:
-                      raw: "MIIDQ...G9rw="
                       parsed: {}
                       metadata: {}
                       ct: {}
@@ -2057,7 +2791,7 @@ paths:
   /v2/tags/{id}/certificates:
     get:
       tags:
-        - certs
+        - certificates v2
         - tags
       summary: Returns a list of certificates for a tag
       description: Returns a list of certificates for a tag
@@ -2188,7 +2922,7 @@ paths:
   /v2/certificates/{fingerprint}/tags:
     get:
       tags:
-        - certs
+        - certificates v2
         - tags
       summary: Returns a list of tags on the given certificate.
       description: |
@@ -2225,7 +2959,7 @@ paths:
   /v2/certificates/{fingerprint}/tags/{id}:
     put:
       tags:
-        - certs
+        - certificates v2
         - tags
       summary: Adds a tag on the given certificate.
       description: |
@@ -2251,7 +2985,7 @@ paths:
           description: "No Content"
     delete:
       tags:
-        - certs
+        - certificates v2
         - tags
       summary: Removes a tag on the given certificate.
       description: |
@@ -2277,31 +3011,14 @@ paths:
           description: "No Content"
 components:
   schemas:
-    ApiResponse:
-      title: Success Response (v2)
+    Expired:
+      type: object
+    Resolved:
       type: object
       properties:
-        code:
-          type: integer
-          example: 200
-        status:
+        resolved_at:
           type: string
-          example: OK
-        result:
-          type: object
-          properties: {}
-    ApiErrorResponse:
-      title: Error Response (v2)
-      type: object
-      properties:
-        code:
-          type: integer
-          example: 422
-        status:
-          type: string
-          example: Unprocessable Entity
-        error:
-          type: string
+          format: date-time
     PerspectiveID:
       type: string
       description: The name of the network from which Censys observed this service.
@@ -2341,23 +3058,53 @@ components:
           type: string
           example: US
     Routing:
-        type: object
-        properties:
-          asn:
-            type: integer
-            example: 15169
-          description:
-            type: string
-            example: GOOGLE
-          bgp_prefix:
-            type: string
-            example: 8.8.8.0/24
-          name:
-            type: string
-            example: GOOGLE
-          country_code:
-            type: string
-            example: US
+      type: object
+      properties:
+        asn:
+          type: integer
+          example: 15169
+        description:
+          type: string
+          example: GOOGLE
+        bgp_prefix:
+          type: string
+          example: 8.8.8.0/24
+        name:
+          type: string
+          example: GOOGLE
+        country_code:
+          type: string
+          example: US
+    ServiceRemovedFromHostNotObserved:
+      type: object
+      required:
+        - _reason
+      properties:
+        _reason:
+          type: string
+          enum: [not_observed,]
+        not_observed:
+          type: object
+          properties:
+            not_observed_at:
+              type: string
+              format: date-time
+            perspective_id:
+              $ref: "#/components/schemas/PerspectiveID"
+    ServiceRemovedFromHostExpired:
+      type: object
+      required:
+        - _reason
+      properties:
+        _reason:
+          type: string
+          enum: [expired,]
+        expired:
+          type: object
+          properties:
+            expired_at:
+              type: string
+              format: date-time
     ServiceID:
       type: object
       description: Object used to uniquely identify a service based on its 3-tuple of
@@ -2376,132 +3123,597 @@ components:
           type: string
           description: Service name.
           example: HTTP
-    ServiceRemovedFromHostNotObserved:
-        type: object
-        required:
-          - _reason
-        properties:
-          _reason:
-            type: string
-            enum: [not_observed,]
-          not_observed:
-            type: object
-            properties:
-              not_observed_at:
-                type: string
-                format: date-time
-              perspective_id:
-                $ref: "#/components/schemas/PerspectiveID"
-    ServiceRemovedFromHostExpired:
-        type: object
-        required:
-          - _reason
-        properties:
-          _reason:
-            type: string
-            enum: [expired,]
-          expired:
-            type: object
-            properties:
-              expired_at:
-                type: string
-                format: date-time
-    ServiceObservedEvent:
-        type: object
-        required:
-          - _event
-        properties:
-          _event:
-            type: string
-            enum: [service_observed,]
-          service_observed:
-            type: object
-            properties:
-              id:
-                $ref: "#/components/schemas/ServiceID"
-              observed_at:
-                type: string
-                format: date-time
-              perspective_id:
-                $ref: "#/components/schemas/PerspectiveID"
-              changed_fields:
-                type: array
-                description: A list of fields that changed during this observation.
-                items:
-                  type: object
-                  properties:
-                    field_name:
-                      type: string
-                      example: services.banner
+    NameRemovedFromHost:
+      type: object
+      properties:
+        name:
+          type: string
+        reason:
+          oneOf:
+            - $ref: "#/components/schemas/Expired"
     LocationUpdatedEvent:
-        type: object
-        required:
-          - _event
-        properties:
-          _event:
-            type: string
-            enum: [location_updated,]
-          location_updated:
-            type: object
-            properties:
-              location:
-                $ref: "#/components/schemas/Location"
+      type: object
+      required:
+        - _event
+      properties:
+        _event:
+          type: string
+          enum: [location_updated,]
+        location_updated:
+          type: object
+          properties:
+            location:
+              $ref: "#/components/schemas/Location"
     RoutingUpdatedEvent:
-        type: object
-        required:
-          - _event
-        properties:
-          _event:
-            type: string
-            enum: [routing_updated,]
-          routing_updated:
-            type: object
-            properties:
-              routing:
-                $ref: "#/components/schemas/Routing"
+      type: object
+      required:
+        - _event
+      properties:
+        _event:
+          type: string
+          enum: [routing_updated,]
+        routing_updated:
+          type: object
+          properties:
+            routing:
+              $ref: "#/components/schemas/Routing"
+    ServiceObservedEvent:
+      type: object
+      required:
+        - _event
+      properties:
+        _event:
+          type: string
+          enum: [service_observed,]
+        service_observed:
+          type: object
+          properties:
+            id:
+              $ref: "#/components/schemas/ServiceID"
+            observed_at:
+              type: string
+              format: date-time
+            perspective_id:
+              $ref: "#/components/schemas/PerspectiveID"
+            changed_fields:
+              type: array
+              description: A list of fields that changed during this observation.
+              items:
+                type: object
+                properties:
+                  field_name:
+                    type: string
+                    example: services.banner
     ServiceRemovedFromHostEvent:
-        type: object
-        required:
-          - _event
-        properties:
-          _event:
-            type: string
-            enum: [service_removed_from_host,]
-          service_removed_from_host:
-            type: object
-            oneOf:
-              - $ref: "#/components/schemas/ServiceRemovedFromHostNotObserved"
-              - $ref: "#/components/schemas/ServiceRemovedFromHostExpired"
-            discriminator:
-              propertyName: _reason
-              mapping:
-                not_observed: "#/components/schemas/ServiceRemovedFromHostNotObserved"
-                expired: "#/components/schemas/ServiceRemovedFromHostExpired"
-            properties:
-              _reason:
-                type: string
-                description: Discriminator which provides the type of reason this object represents.
-                example: "not_observed"
-              id:
-                $ref: "#/components/schemas/ServiceID"
+      type: object
+      required:
+        - _event
+      properties:
+        _event:
+          type: string
+          enum: [service_removed_from_host,]
+        service_removed_from_host:
+          type: object
+          oneOf:
+            - $ref: "#/components/schemas/ServiceRemovedFromHostNotObserved"
+            - $ref: "#/components/schemas/ServiceRemovedFromHostExpired"
+          discriminator:
+            propertyName: _reason
+            mapping:
+              not_observed: "#/components/schemas/ServiceRemovedFromHostNotObserved"
+              expired: "#/components/schemas/ServiceRemovedFromHostExpired"
+          properties:
+            _reason:
+              type: string
+              description: Discriminator which provides the type of reason this object represents.
+              example: "not_observed"
+            id:
+              $ref: "#/components/schemas/ServiceID"
     ServiceAddedToHostEvent:
-        type: object
-        required:
-          - _event
-        properties:
-          _event:
-            type: string
-            enum: [service_added_to_host,]
-          service_added_to_host:
-            type: object
-            properties:
-              id:
-                $ref: "#/components/schemas/ServiceID"
-              observed_at:
+      type: object
+      required:
+        - _event
+      properties:
+        _event:
+          type: string
+          enum: [service_added_to_host,]
+        service_added_to_host:
+          type: object
+          properties:
+            id:
+              $ref: "#/components/schemas/ServiceID"
+            observed_at:
+              type: string
+              format: date-time
+            perspective_id:
+              $ref: "#/components/schemas/PerspectiveID"
+    ServiceEnrichedEvent:
+      type: object
+      required:
+        - _event
+      properties:
+        _event:
+          type: string
+          enum: [service_enriched,]
+        service_enriched:
+          type: object
+          properties:
+            id:
+              $ref: "#/components/schemas/ServiceID"
+            enrichment:
+              type: string
+    NameResolvedToHostEvent:
+      type: object
+      required:
+        - _event
+      properties:
+        _event:
+          type: string
+          enum: [name_resolved_to_host,]
+        name_resolved_to_host:
+          type: object
+          properties:
+            name:
+              type: string
+            record_type:
+              type: string
+              enum: [unknown, a, aaaa, cname]
+            resolved_at:
+              type: string
+              format: date-time
+    NamesRemovedFromHostEvent:
+      type: object
+      required:
+        - _event
+      properties:
+        _event:
+          type: string
+          enum: [names_removed_from_host,]
+        names_removed_from_host:
+          type: object
+          properties:
+            names_removed:
+              type: array
+              items:
+                $ref: "#/components/schemas/NameRemovedFromHost"
+    ReverseDnsUpdatedEvent:
+      type: object
+      required:
+        - _event
+      properties:
+        _event:
+          type: string
+          enum: [reverse_dns_updated,]
+        reverse_dns_updated:
+          type: object
+          properties:
+            names:
+              type: array
+              items:
                 type: string
-                format: date-time
-              perspective_id:
-                $ref: "#/components/schemas/PerspectiveID"
+            reason:
+              oneOf:
+                - $ref: "#/components/schemas/Expired"
+                - $ref: "#/components/schemas/Resolved"
+    CT:
+      type: object
+      properties:
+        entries:
+          type: object
+          properties:
+            index:
+              type: integer
+            added_to_ct_at:
+              type: string
+              format: date-time
+            ct_to_censys_at:
+              type: string
+              format: date-time
+      example:
+        entries:
+          google_xenon_2022:
+            index: 260168847
+            added_to_ct_at: "2021-10-29T23:06:43.036Z"
+            ct_to_censys_at: "2021-10-29T23:08:00.821556099Z"
+          google_argon_2022:
+            index: 176077892
+            added_to_ct_at: "2021-10-29T23:06:42.977Z"
+            ct_to_censys_at: "2021-11-11T22:04:07.689857142Z"
+    Extension:
+      type: object
+      properties:
+        id:
+          type: string
+        critical:
+          type: boolean
+        value:
+          type: string
+    KeyAlgorithm:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "RSA"
+        oid:
+          type: string
+          example: "1.2.840.113549.1.1.1"
+    SubjectKeyInfo:
+      type: object
+      properties:
+        key_algorithm:
+          $ref: "#/components/schemas/KeyAlgorithm"
+        key:
+          type: object
+          oneOf:
+            - $ref: "#/components/schemas/RSAPublicKey"
+            - $ref: "#/components/schemas/DSAPublicKey"
+            - $ref: "#/components/schemas/ECDSAPublicKey"
+        fingerprint_sha256:
+          type: string
+          example: "754cb1e2e2088214a5970662bb5a60aec8a2e29b94f53529aa608abee6682c60"
+    RSAPublicKey:
+      type: object
+      properties:
+        exponent:
+          type: integer
+          example: 65537
+        modulus:
+          type: string
+          example: "wLO31ZXiUPy8VMb56BETwS2in+NTUKArirdppeQ/B996yP9yxIKz6DjWTpfLP6FeQVrLz+Z1ik56xAG0pSlOzKatG1g+whNqQIUk7q3KVbpKivSQy5x2Tvvey+WaTKFgkF5ZclSAGPVRlOeslLIVPZe9XwVdWK06vg0dqjs8l/7UkPG7WPxcgZYYiR0Fwy1orqq62jIXNuQX8PpY1wk9NSwYABkWRdG4IPX3yTMBq3yng5PpU7gnGXQbc1pnzmpj+uwKydLZF/A7n8Cgq4AS9HY8UBGGY6+JcpToW6bhHFyg/XSWRcKljd8UrWJxe0C157Yg0la+KHieHr1i6ARqzQ=="
+        length:
+          type: integer
+          example: 2048
+    DSAPublicKey:
+      type: object
+      properties:
+        g:
+          type: string
+        p:
+          type: string
+        q:
+          type: string
+        y:
+          type: string
+    ECDSAPublicKey:
+      type: object
+      properties:
+        b:
+          type: string
+        curve:
+          type: string
+        gx:
+          type: string
+        gy:
+          type: string
+        length:
+          type: integer
+        n:
+          type: string
+        p:
+          type: string
+        pub:
+          type: string
+        x:
+          type: string
+        y:
+          type: string
+    DistinguishedName:
+      type: object
+      properties:
+        common_name:
+          type: array
+          items:
+            type: string
+            example:
+              - "R3"
+        serial_number:
+          type: array
+          items:
+            type: string
+        country:
+          type: array
+          items:
+            type: string
+            example:
+              - "US"
+        locality:
+          type: array
+          items:
+            type: string
+        province:
+          type: array
+          items:
+            type: string
+        street_address:
+          type: array
+          items:
+            type: string
+        organization:
+          type: array
+          items:
+            type: string
+            example:
+              - "Let's Encrypt"
+        organizational_unit:
+          type: array
+          items:
+            type: string
+        postal_code:
+          type: array
+          items:
+            type: string
+        domain_component:
+          type: array
+          items:
+            type: string
+        email_address:
+          type: array
+          items:
+            type: string
+        given_name:
+          type: array
+          items:
+            type: string
+        surname:
+          type: array
+          items:
+            type: string
+        jurisdiction_country:
+          type: array
+          items:
+            type: string
+        jurisdiction_locality:
+          type: array
+          items:
+            type: string
+        jurisdiction_province:
+          type: array
+          items:
+            type: string
+        organization_id:
+          type: array
+          items:
+            type: string
+    RevocationInfo:
+      type: object
+      properties:
+        revoked:
+          type: boolean
+          example: false
+        reason:
+          type: string
+          enum:
+            - UNKNOWN
+            - UNSPECIFIED
+            - KEY_COMPROMISE
+            - CA_COMPROMISE
+            - AFFILIATION_CHANGED
+            - SUPERSEDED
+            - CESSATION_OF_OPERATION
+            - CERTIFICATE_HOLD
+            - REMOVE_FROM_CRL
+            - PRIVILEGE_WITHDRAWN
+            - AA_COMPROMISE
+          default: UNKNOWN
+        next_update:
+          type: string
+          format: date-time
+          example: "2023-01-11T15:59:58Z"
+        revocation_time:
+          type: string
+          format: date-time
+          example: "2024-01-11T16:23:34Z"
+    Chain:
+      type: object
+      properties:
+        sha256fp:
+          type: array
+          items:
+            type: string
+          example:
+            - "46494e30379059df18be52124305e606fc59070e5b21076ce113954b60517cda"
+            - "8b05b68cc659e5ed0fcb38f2c942fbfd200e6f2ff9f85d63c6994ef5e0b02701"
+            - "96bcec06264976f37460779acf28c5a7cfe8a3c0aae11a8ffcee05c0bddf08c6"
+    Chains:
+      description: Current trusted paths to the root store. Only valid if the certificate has trusted paths.
+      type: array
+      items:
+        $ref: "#/components/schemas/Chain"
+    RootStore:
+      type: object
+      properties:
+        is_valid:
+          type: boolean
+          example: true
+        ever_valid:
+          type: boolean
+          example: true
+          description: True if the certificate is valid now or was ever valid in the past.
+        has_trusted_path:
+          type: boolean
+          example: true
+          description: True if there exists a path from the certificate to the root store.
+        had_trusted_path:
+          type: boolean
+          example: true
+          description: True if now or at some point in the past there existed a path from the certificate to the root store.
+        chains:
+          $ref: "#/components/schemas/Chains"
+        parents:
+          type: array
+          description: SHA256 fingerprints of immediate parents
+          items:
+            type: string
+          example:
+            - "46494e30379059df18be52124305e606fc59070e5b21076ce113954b60517cda"
+        in_revocation_set:
+          type: boolean
+          example: false
+          description: True if the certificate is in the revocation set (e.g. OneCRL) associated with this root store.
+        type:
+          type: string
+          enum:
+            - UNKNOWN
+            - ROOT
+            - INTERMEDIATE
+            - LEAF
+          default: UNKNOWN
+          description: Indicates if the certificate is a root, intermediate, or leaf.
+    ZLint:
+      type: object
+      properties:
+        version:
+          type: integer
+          example: 3
+        timestamp:
+          type: string
+          format: date-time
+          example: "2023-01-06T12:46:27Z"
+        notices_present:
+          type: boolean
+          example: true
+        warnings_present:
+          type: boolean
+          example: false
+        errors_present:
+          type: boolean
+          example: false
+        fatals_present:
+          type: boolean
+          example: false
+        failed_lints:
+          type: array
+          items:
+            type: string
+            example:
+              - "n_subject_common_name_included"
+    Parsed:
+      type: object
+      properties:
+        version:
+          type: integer
+          example: 3
+        serial_number:
+          type: string
+          example: 311703586789118042424998420179537559397550
+        issuer_dn:
+          type: string
+          example: "C=US, O=Let's Encrypt, CN=R3"
+        issuer:
+          $ref: "#/components/schemas/DistinguishedName"
+        subject_dn:
+          type: string
+          example: "CN=www.kgcontracting.co"
+        subject:
+          $ref: "#/components/schemas/DistinguishedName"
+        subject_key_info:
+          $ref: "#/components/schemas/SubjectKeyInfo"
+        validity_period:
+          type: object
+          properties:
+            not_before:
+              type: string
+              format: date-time
+              example: "2022-12-31T11:37:55Z"
+            not_after:
+              type: string
+              format: date-time
+              example: "2023-03-31T11:37:54Z"
+            length_seconds:
+              type: integer
+              example: 7775999
+        signature:
+          type: object
+          properties:
+            signature_algorithm:
+              $ref: "#/components/schemas/KeyAlgorithm"
+            value:
+              type: string
+              example: "lTR6e9idpqa9mtzFCWadkzteKim0FDF9crAsWDv62/YW9baXeCTugEhP5K4MONuxAT2Ja1qdsS/cYilvvvu6hO0Imm5iwUjMnR5gv9nPbn0cj14PMVhyYYpoBeW/SEMs4tCqwH1KuEWn9owaYcPdN8DkDCazhrHzf/L8UObqzcMF7NE9ocQ7sSCcsTxaY4fP+1f62B0BSWs8ZJmBftHPGg74Cba0CANbXeckI8bH+Ew6npUTyJ+o/Em/b5B0ZWHr0bTqIudVfT5QW17NKJ27jOccTTrMLmeie7sS3SQsj6US0Z3It71riLzGpkhLs5yJT3t1ZjChBSWpqzNZAwqirQ=="
+            valid:
+              type: boolean
+              example: false
+            self_signed:
+              type: boolean
+              example: false
+        extensions:
+          type: object
+          properties:
+            key_usage:
+              type: object
+            basic_constraints:
+              type: object
+            subject_alt_name:
+              type: object
+            issuer_alt_name:
+              type: object
+            name_constraints:
+              type: object
+            crl_distribution_points:
+              type: array
+              items:
+                type: string
+            authority_key_id:
+              type: string
+              example: "FC6zF7dYVsuuUAlA5h+vnYsUwsY="
+            subject_key_id:
+              type: string
+              example: "pqG5rJ0IhrO1j1+rqfQvdB2e8p0="
+            extended_key_usage:
+              type: object
+            certificate_policies:
+              type: array
+              items:
+                type: object
+            authority_info_access:
+              type: object
+            ct_poison:
+              type: boolean
+              example: false
+            signed_certificate_timestamps:
+              type: array
+              items:
+                type: object
+            tor_service_descriptors:
+              type: array
+              items:
+                type: object
+            cabf_organization_id:
+              type: object
+            qc_statements:
+              type: object
+        unknown_extensions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Extension"
+        redacted:
+          type: boolean
+          example: false
+    ApiResponse:
+      title: Success Response (v2)
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        status:
+          type: string
+          example: OK
+        result:
+          type: object
+          properties: {}
+    ApiErrorResponse:
+      title: Error Response (v2)
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 422
+        status:
+          type: string
+          example: Unprocessable Entity
+        error:
+          type: string
     Host:
       type: object
       properties:
@@ -2602,6 +3814,110 @@ components:
               example: "cpe:2.3:o:*:linux:*:*:*:*:*:*:*:*"
             other:
               type: object
+    CertHit:
+      type: object
+      properties:
+        fingerprint_sha256:
+          type: string
+          example: 9b00121b4e85d50667ded1a8aa39855771bdb67ceca6f18726b49374b41f0041
+        fingerprint_sha1:
+          type: string
+          example: d508e7f8163fb67434f84091dc7c2ca8afd5234d
+        fingerprint_md5:
+          type: string
+          example: 3818d99263b47ab28f7de5b293ee1418
+        tbs_fingerprint_sha256:
+          type: string
+          example: 4b098b6bd9459340fb0f3cfb80f0bc3283370c455d57ca20da40e7eecce341d5
+        tbs_no_ct_fingerprint_sha256:
+          type: string
+          example: 5c095a40e76c245323086d26d1fa428d3b443b42fb58c7dbb19b32dfe516b749
+        spki_fingerprint_sha256:
+          type: string
+          example: 754cb1e2e2088214a5970662bb5a60aec8a2e29b94f53529aa608abee6682c60
+        parent_spki_fingerprint_sha256:
+          type: string
+          example: 390bc358202771a65e7be7a87924d7f2a079de04feb5ffd4163fae4fbf9b11e9
+        parsed:
+          $ref: "#/components/schemas/Parsed"
+        precert:
+          type: boolean
+          example: false
+        revoked:
+          type: boolean
+          example: false
+        names:
+          type: array
+          items:
+            type: string
+            example:
+              - "kgcontracting.co"
+              - "www.kgcontracting.co"
+        validation_level:
+          type: string
+          enum:
+            - UNKNOWN
+            - DV
+            - OV
+            - EV
+          default: UNKNOWN
+        validation:
+          type: object
+          properties:
+            nss:
+              $ref: "#/components/schemas/RootStore"
+            microsoft:
+              $ref: "#/components/schemas/RootStore"
+            apple:
+              $ref: "#/components/schemas/RootStore"
+            google_ct_primary:
+              $ref: "#/components/schemas/RootStore"
+        revocation:
+          type: object
+          properties:
+            ocsp:
+              $ref: "#/components/schemas/RevocationInfo"
+            crl:
+              $ref: "#/components/schemas/RevocationInfo"
+        ct:
+          $ref: "#/components/schemas/CT"
+        ever_seen_in_scan:
+          type: boolean
+          example: false
+        raw:
+          type: string
+        added_at:
+          type: string
+          format: date-time
+          example: "2023-01-06T12:46:27Z"
+        modified_at:
+          type: string
+          format: date-time
+          example: "2023-01-06T12:46:27Z"
+        validated_at:
+          type: string
+          format: date-time
+          example: "2023-01-06T12:46:27Z"
+        parse_status:
+          type: string
+          enum:
+            - CERTIFICATE_PARSE_STATUS_UNKNOWN
+            - CERTIFICATE_PARSE_STATUS_SUCCESS
+            - CERTIFICATE_PARSE_STATUS_FAIL
+            - CERTIFICATE_PARSE_STATUS_CORRUPTED
+          default: CERTIFICATE_PARSE_STATUS_UNKNOWN
+        zlint:
+          $ref: "#/components/schemas/ZLint"
+        labels:
+          type: array
+          items:
+            type: string
+            example:
+              - "ever-trusted"
+              - "trusted"
+              - "leaf"
+              - "dv"
+              - "unexpired"
     HostHit:
       type: object
       properties:
@@ -2650,6 +3966,10 @@ components:
         - $ref: "#/components/schemas/RoutingUpdatedEvent"
         - $ref: "#/components/schemas/ServiceRemovedFromHostEvent"
         - $ref: "#/components/schemas/ServiceAddedToHostEvent"
+        - $ref: "#/components/schemas/ServiceEnrichedEvent"
+        - $ref: "#/components/schemas/NameResolvedToHostEvent"
+        - $ref: "#/components/schemas/NamesRemovedFromHostEvent"
+        - $ref: "#/components/schemas/ReverseDnsUpdatedEvent"
       discriminator:
         propertyName: _event
         mapping:
@@ -2658,6 +3978,10 @@ components:
           routing_updated: "#/components/schemas/RoutingUpdatedEvent"
           service_removed_from_host: "#/components/schemas/ServiceRemovedFromHostEvent"
           service_added_to_host: "#/components/schemas/ServiceAddedToHostEvent"
+          service_enriched: "#/components/schemas/ServiceEnrichedEvent"
+          name_resolved_to_host: "#/components/schemas/NameResolvedToHostEvent"
+          names_removed_from_host: "#/components/schemas/NamesRemovedFromHostEvent"
+          reverse_dns_update: "#/components/schemas/ReverseDnsUpdatedEvent"
       properties:
         _event:
           type: string
@@ -2747,9 +4071,6 @@ components:
     Certificate:
       type: object
       properties:
-        raw:
-          type: string
-          example: "MIIDQ...G9rw="
         parsed:
           type: object
           properties:
@@ -2795,7 +4116,111 @@ components:
             extensions:
               type: object
         ct:
-          type: object    
+          type: object
+    CertificateV2:
+      type: object
+      properties:
+        fingerprint_sha256:
+          type: string
+          example: 9b00121b4e85d50667ded1a8aa39855771bdb67ceca6f18726b49374b41f0041
+        fingerprint_sha1:
+          type: string
+          example: d508e7f8163fb67434f84091dc7c2ca8afd5234d
+        fingerprint_md5:
+          type: string
+          example: 3818d99263b47ab28f7de5b293ee1418
+        tbs_fingerprint_sha256:
+          type: string
+          example: 4b098b6bd9459340fb0f3cfb80f0bc3283370c455d57ca20da40e7eecce341d5
+        tbs_no_ct_fingerprint_sha256:
+          type: string
+          example: 5c095a40e76c245323086d26d1fa428d3b443b42fb58c7dbb19b32dfe516b749
+        spki_fingerprint_sha256:
+          type: string
+          example: 754cb1e2e2088214a5970662bb5a60aec8a2e29b94f53529aa608abee6682c60
+        parent_spki_fingerprint_sha256:
+          type: string
+          example: 390bc358202771a65e7be7a87924d7f2a079de04feb5ffd4163fae4fbf9b11e9
+        parsed:
+          $ref: "#/components/schemas/Parsed"
+        precert:
+          type: boolean
+          example: false
+        revoked:
+          type: boolean
+          example: false
+        names:
+          type: array
+          items:
+            type: string
+            example:
+              - "kgcontracting.co"
+              - "www.kgcontracting.co"
+        validation_level:
+          type: string
+          enum:
+            - UNKNOWN
+            - DV
+            - OV
+            - EV
+          default: UNKNOWN
+        validation:
+          type: object
+          properties:
+            nss:
+              $ref: "#/components/schemas/RootStore"
+            microsoft:
+              $ref: "#/components/schemas/RootStore"
+            apple:
+              $ref: "#/components/schemas/RootStore"
+            chrome:
+              $ref: "#/components/schemas/RootStore"
+        revocation:
+          type: object
+          properties:
+            ocsp:
+              $ref: "#/components/schemas/RevocationInfo"
+            crl:
+              $ref: "#/components/schemas/RevocationInfo"
+        ct:
+          $ref: "#/components/schemas/CT"
+        ever_seen_in_scan:
+          type: boolean
+          example: false
+        raw:
+          type: string
+        added_at:
+          type: string
+          format: date-time
+          example: "2023-01-06T12:46:27Z"
+        modified_at:
+          type: string
+          format: date-time
+          example: "2023-01-06T12:46:27Z"
+        validated_at:
+          type: string
+          format: date-time
+          example: "2023-01-06T12:46:27Z"
+        parse_status:
+          type: string
+          enum:
+            - CERTIFICATE_PARSE_STATUS_UNKNOWN
+            - CERTIFICATE_PARSE_STATUS_SUCCESS
+            - CERTIFICATE_PARSE_STATUS_FAIL
+            - CERTIFICATE_PARSE_STATUS_CORRUPTED
+          default: CERTIFICATE_PARSE_STATUS_UNKNOWN
+        zlint:
+          $ref: "#/components/schemas/ZLint"
+        labels:
+          type: array
+          items:
+            type: string
+            example:
+              - "ever-trusted"
+              - "trusted"
+              - "leaf"
+              - "dv"
+              - "unexpired"
   examples:
     unauthorizedExample:
       summary: "Unauthorized Request"
@@ -2815,6 +4240,12 @@ components:
         code: 400
         status: "Bad Request"
         error: "Invalid search. Your query could not be parsed"
+    invalidCertExample:
+      summary: "Invalid SHA-256 fingerprint"
+      value:
+        code: 422
+        status: "Unprocessable Entity"
+        error: "Invalid SHA-256 fingerprint"
     invalidCursorExample:
       summary: "Invalid Cursor"
       value:
@@ -2827,6 +4258,12 @@ components:
         code: 400
         status: "Bad Request"
         error: "Invalid field: ''. Did you mean ''?"
+    tooManyRequestsExample:
+      summary: "Too Many Requests"
+      value:
+        code: 429
+        status: "Too Many Requests"
+        error: "You have used your full quota for this billing period."
     invalidNumBucketsExample:
       summary: "Invalid Num Buckets"
       value:

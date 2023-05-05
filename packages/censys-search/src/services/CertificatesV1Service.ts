@@ -6,7 +6,7 @@ import type { Certificate } from "../models/Certificate";
 import type { BaseHttpRequest } from "../core/BaseHttpRequest";
 import type { CancelablePromise } from "../core/CancelablePromise";
 
-export class CertificatesService {
+export class CertificatesV1Service {
     constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**

@@ -80,6 +80,7 @@ export class HostsService {
                 400: `Bad Request.`,
                 401: `You must authenticate with a valid API ID and secret.`,
                 422: `Invalid cursor.`,
+                429: `Too many requests.`,
             },
         });
     }
@@ -131,6 +132,7 @@ export class HostsService {
             errors: {
                 400: `Bad Request.`,
                 401: `You must authenticate with a valid API ID and secret.`,
+                429: `Too many requests.`,
             },
         });
     }
@@ -168,6 +170,7 @@ export class HostsService {
             errors: {
                 401: `You must authenticate with a valid API ID and secret.`,
                 422: `Invalid IP address.`,
+                429: `Too many requests.`,
             },
         });
     }
@@ -243,6 +246,7 @@ export class HostsService {
             errors: {
                 401: `You must authenticate with a valid API ID and secret.`,
                 422: `Invalid IP address.`,
+                429: `Too many requests.`,
             },
         });
     }
@@ -322,6 +326,7 @@ export class HostsService {
             errors: {
                 401: `You must authenticate with a valid API ID and secret.`,
                 422: `Invalid IP address.`,
+                429: `Too many requests.`,
             },
         });
     }
@@ -361,6 +366,7 @@ export class HostsService {
             },
             errors: {
                 401: `You must authenticate with a valid API ID and secret.`,
+                429: `Too many requests.`,
             },
         });
     }

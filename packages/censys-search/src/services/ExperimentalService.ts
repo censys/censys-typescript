@@ -85,6 +85,7 @@ export class ExperimentalService {
             errors: {
                 401: `You must authenticate with a valid API ID and secret.`,
                 422: `Invalid IP address.`,
+                429: `Too many requests.`,
             },
         });
     }

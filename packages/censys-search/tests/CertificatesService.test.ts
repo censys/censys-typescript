@@ -114,7 +114,7 @@ describe("CertificatesService", () => {
     it("should return structured certificate data for the specified SHA-256 fingerprint", async () => {
         // Actual call
         const certificatePromise =
-            client.certificates.viewCertificate(CERTIFICATE_SHA256);
+            client.certificatesV1.viewCertificate(CERTIFICATE_SHA256);
 
         // Mock
         mock.onGet(VIEW_PATH + CERTIFICATE_SHA256, undefined, HEADERS).reply(
@@ -133,7 +133,7 @@ describe("CertificatesService", () => {
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            client.certificates.viewCertificate(CERTIFICATE_SHA256);
+            client.certificatesV1.viewCertificate(CERTIFICATE_SHA256);
 
         // Mock
         mock.onGet(VIEW_PATH + CERTIFICATE_SHA256, undefined, HEADERS).reply(
@@ -147,7 +147,7 @@ describe("CertificatesService", () => {
     it("should return a list of certificates", async () => {
         // Actual call
         const certificatesPromise =
-            client.certificates.searchCertificates(SEARCH_REQ);
+            client.certificatesV1.searchCertificates(SEARCH_REQ);
 
         // Mock
         mock.onPost(SEARCH_PATH, SEARCH_REQ, POST_HEADERS).reply(
@@ -169,7 +169,7 @@ describe("CertificatesService", () => {
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            client.certificates.searchCertificates(SEARCH_REQ);
+            client.certificatesV1.searchCertificates(SEARCH_REQ);
 
         // Mock
         mock.onPost(SEARCH_PATH, SEARCH_REQ, POST_HEADERS).reply(status);
@@ -181,7 +181,7 @@ describe("CertificatesService", () => {
     it("should generate certificate report", async () => {
         // Actual call
         const certificatePromise =
-            client.certificates.generateCertificateReport(CERT_REPORT_REQ);
+            client.certificatesV1.generateCertificateReport(CERT_REPORT_REQ);
 
         // Mock
         mock.onPost(REPORT_PATH, CERT_REPORT_REQ, POST_HEADERS).reply(
@@ -200,7 +200,7 @@ describe("CertificatesService", () => {
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            client.certificates.generateCertificateReport(CERT_REPORT_REQ);
+            client.certificatesV1.generateCertificateReport(CERT_REPORT_REQ);
 
         // Mock
         mock.onPost(REPORT_PATH, CERT_REPORT_REQ, POST_HEADERS).reply(status);
@@ -212,7 +212,7 @@ describe("CertificatesService", () => {
     it("should return bulk structured certificate data for the specified SHA-256 fingerprints", async () => {
         // Actual call
         const certificatePromise =
-            client.certificates.bulkCertificateLookup(BULK_VIEW_REQ);
+            client.certificatesV1.bulkCertificateLookup(BULK_VIEW_REQ);
 
         // Mock
         mock.onPost(BULK_PATH, BULK_VIEW_REQ, POST_HEADERS).reply(
@@ -229,7 +229,7 @@ describe("CertificatesService", () => {
     ])("should throw a %i error", async (status, errorMessage) => {
         // Actual call
         const certificatePromise =
-            client.certificates.bulkCertificateLookup(BULK_VIEW_REQ);
+            client.certificatesV1.bulkCertificateLookup(BULK_VIEW_REQ);
 
         // Mock
         mock.onPost(BULK_PATH, BULK_VIEW_REQ, POST_HEADERS).reply(status);

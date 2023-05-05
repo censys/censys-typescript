@@ -148,7 +148,7 @@ describe("CertsService", () => {
         const cursor = "test_cursor";
 
         // Actual call
-        const certsPromise = client.certs.getHostsByCert(
+        const certsPromise = client.certificatesV2.getHostsByCert(
             CERTIFICATE_SHA256,
             cursor
         );
@@ -166,7 +166,8 @@ describe("CertsService", () => {
 
     it("Returns a list of comments on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.getCommentsByCert(CERTIFICATE_SHA256);
+        const certsPromise =
+            client.certificatesV2.getCommentsByCert(CERTIFICATE_SHA256);
 
         // Mock
         mock.onGet(
@@ -181,7 +182,7 @@ describe("CertsService", () => {
 
     it("should add a comment on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.addCommentByCert(
+        const certsPromise = client.certificatesV2.addCommentByCert(
             CERTIFICATE_SHA256,
             CERTS_REQUEST
         );
@@ -199,7 +200,7 @@ describe("CertsService", () => {
 
     it("should return a comment on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.getCommentByCert(
+        const certsPromise = client.certificatesV2.getCommentByCert(
             CERTIFICATE_SHA256,
             "test_id"
         );
@@ -217,7 +218,7 @@ describe("CertsService", () => {
 
     it("should update a comment on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.updateCommentByCert(
+        const certsPromise = client.certificatesV2.updateCommentByCert(
             CERTIFICATE_SHA256,
             "test_id",
             UPDATE_COMMENT_REQUEST
@@ -236,7 +237,7 @@ describe("CertsService", () => {
 
     it("should throw an error", async () => {
         // Actual call
-        const certsPromise = client.certs.updateCommentByCert(
+        const certsPromise = client.certificatesV2.updateCommentByCert(
             CERTIFICATE_SHA256,
             "test_id",
             UPDATE_COMMENT_REQUEST
@@ -255,7 +256,7 @@ describe("CertsService", () => {
 
     it("should delete a comment on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.deleteCommentByCert(
+        const certsPromise = client.certificatesV2.deleteCommentByCert(
             CERTIFICATE_SHA256,
             "test_id"
         );
@@ -272,7 +273,7 @@ describe("CertsService", () => {
 
     it("delete comment should throw an error", async () => {
         // Actual call
-        const certsPromise = client.certs.deleteCommentByCert(
+        const certsPromise = client.certificatesV2.deleteCommentByCert(
             CERTIFICATE_SHA256,
             "test_id"
         );
@@ -287,9 +288,10 @@ describe("CertsService", () => {
         await expect(certsPromise).rejects.toThrowError("Not Found");
     });
 
-    it("should reurn a list of certificates for a tag", async () => {
+    it("should return a list of certificates for a tag", async () => {
         // Actual call
-        const certsPromise = client.certs.listCertificatesForTag("test_tag");
+        const certsPromise =
+            client.certificatesV2.listCertificatesForTag("test_tag");
 
         // Mock
         mock.onGet(BASE_URL_V2 + "/tags/test_tag/certificates", HEADERS).reply(
@@ -303,7 +305,8 @@ describe("CertsService", () => {
 
     it("should return a list of tags on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.getTagsByCert(CERTIFICATE_SHA256);
+        const certsPromise =
+            client.certificatesV2.getTagsByCert(CERTIFICATE_SHA256);
 
         // Mock
         mock.onGet(CERTS_PATH + CERTIFICATE_SHA256 + "/tags", HEADERS).reply(
@@ -316,7 +319,10 @@ describe("CertsService", () => {
     });
     it("should add a tag on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.tagCert(CERTIFICATE_SHA256, "tag_id");
+        const certsPromise = client.certificatesV2.tagCert(
+            CERTIFICATE_SHA256,
+            "tag_id"
+        );
 
         // Mock
         mock.onPut(CERTS_PATH + CERTIFICATE_SHA256 + "/tags/tag_id").reply(200);
@@ -327,7 +333,7 @@ describe("CertsService", () => {
 
     it("should remove a tag on the given certificate.", async () => {
         // Actual call
-        const certsPromise = client.certs.untagCert(
+        const certsPromise = client.certificatesV2.untagCert(
             CERTIFICATE_SHA256,
             "tag_id"
         );

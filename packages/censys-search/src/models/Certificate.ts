@@ -3,7 +3,6 @@
 /* eslint-disable */
 
 export type Certificate = {
-    raw?: string;
     parsed?: {
         fingerprint_sha1?: string;
         fingerprint_sha256?: string;
