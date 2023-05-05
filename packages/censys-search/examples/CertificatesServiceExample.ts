@@ -8,7 +8,7 @@ const client = new CensysSearch({
 // View specified certificate
 const fingerprint =
     "125d206a9931a1f1a71e4c9a4ce66f2d3a99a64c00d040e7983a211e932ad2f7";
-client.certificates
+client.certificatesV1
     .viewCertificate(fingerprint)
     .then(console.log)
     .catch(console.error);
@@ -17,7 +17,7 @@ client.certificates
 const searchRequest = {
     query: " parsed.names: `censys.io` and parsed.issuer.organization: `Let's Encrypt`",
 };
-client.certificates
+client.certificatesV1
     .searchCertificates(searchRequest)
     .then(console.log)
     .catch(console.error);
@@ -27,7 +27,7 @@ const reportRequest = {
     query: "github.com and tags: trusted",
     field: "parsed.validity.start",
 };
-client.certificates
+client.certificatesV1
     .generateCertificateReport(reportRequest)
     .then(console.log)
     .catch(console.error);
@@ -39,7 +39,7 @@ const bulkRequest = {
         "629ee76e44b336f06bfac826be9aae234b661f64a03c1988fe90b89fcb498bf8",
     ],
 };
-client.certificates
+client.certificatesV1
     .bulkCertificateLookup(bulkRequest)
     .then(console.log)
     .catch(console.error);
