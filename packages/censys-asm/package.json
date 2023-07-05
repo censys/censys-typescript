@@ -1,7 +1,7 @@
 {
   "name": "@censys/asm",
   "description": "An easy-to-use and lightweight Typescript wrapper for Censys ASM APIs.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "Apache-2.0",
   "keywords": [
     "censys",
