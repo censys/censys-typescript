@@ -13,8 +13,8 @@
     "test:search": "yarn workspace @censys/search run test",
     "test:asm": "yarn workspace @censys/asm run test",
     "test": "yarn test:search && yarn test:asm",
-    "publish:search": "yarn workspace @censys/search publish --non-interactive --access public",
-    "publish:asm": "yarn workspace @censys/asm publish --non-interactive --access public",
+    "publish:search": "yarn workspace @censys/search build && yarn workspace @censys/search publish --non-interactive --access public",
+    "publish:asm": "yarn workspace @censys/asm build && yarn workspace @censys/asm publish --non-interactive --access public",
     "publish": "yarn publish:search && yarn publish:asm"
   },
   "devDependencies": {
