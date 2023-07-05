@@ -1,7 +1,7 @@
 {
   "name": "@censys/search",
   "description": "An easy-to-use and lightweight Typescript wrapper for Censys Search APIs.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "Apache-2.0",
   "keywords": [
     "censys",
